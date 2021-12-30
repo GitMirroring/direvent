@@ -2,7 +2,7 @@ use strict;
 use warnings;
 set_from_init_file('EXTRA_HEAD', qq{
 <link rel="stylesheet" type="text/css" href="css/info.css"/>
-<link rel="stylesheet" type="text/css" href="css/pies.css"/>
+<link rel="stylesheet" type="text/css" href="css/direvent.css"/>
 <script src="js/modernizr.js" type="text/javascript"></script>
 <script src="js/info.js" type="text/javascript"></script>
 });
