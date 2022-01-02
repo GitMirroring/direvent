@@ -1,5 +1,5 @@
 /* Environment-specific globbing pattern matching for GNU direvent.
-   Copyright (C) 2019-2021 Sergey Poznyakoff
+   Copyright (C) 2019-2022 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
