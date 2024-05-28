@@ -78,7 +78,7 @@ evtrans_sys_to_gen(int fflags, event_mask const *xlat, event_mask *ret_evt)
 int
 evtrans_gen_to_sys(event_mask const *event, event_mask const *xlat)
 {
-	int n = 0;
+	int n = event->sys_mask;
 	for (; xlat->gen_mask != 0; xlat++)
 		if (xlat->gen_mask & event->gen_mask)
 			n |= xlat->sys_mask;
