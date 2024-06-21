@@ -206,7 +206,7 @@ static void
 process_event(struct kevent *ep)
 {
 	struct watchpoint *dp = ep->udata;
-	char *filename, *dirname;
+	char const *filename, *dirname;
 	event_mask event;
 	
 	if (!dp) {
@@ -238,9 +238,8 @@ process_event(struct kevent *ep)
 	 * future, the logic below will need to be changed accordingly.
 	 */
 	if (!dp->isdir) {
-		filename = split_pathname(dp, &dirname);
+		filename = watchpoint_extract_filename(dp, &dirname);
 		watchpoint_run_handlers(dp, event, dirname, filename);
-		unsplit_pathname(dp);
 	}
 	
 	if (dp->isdir && !(ep->fflags & (NOTE_DELETE|NOTE_RENAME))) {

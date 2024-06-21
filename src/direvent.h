@@ -112,18 +112,21 @@ struct recent_head {
    handlers for various events: */
 struct watchpoint {
 	size_t refcnt;
-	int wd;                              /* Watch descriptor */
+	int wd;                              /* Watch descriptor. */
 	struct watchpoint *parent;           /* Points to the parent watcher.
-					        NULL for top-level watchers */
-	char *dirname;                       /* Pathname being watched */
-	int isdir;                           /* Is it directory */
-	handler_list_t handler_list;         /* List of handlers */
-	int depth;                           /* Recursion depth */
-	char *split_p;                       /* Points to the deleted directory
-						separator in dirname (see
-						split_pathname,
-						unsplit_pathname */
+					        NULL for top-level watchers. */
+	char *dirname;                       /* Pathname being watched. */
+	int isdir;                           /* Is it directory. */
+	handler_list_t handler_list;         /* List of handlers. */
+	int depth;                           /* Recursion depth. */
+
 	struct recent_head rhead;
+
+	/* The following two fields represent dirname split into its two
+	   parts: */
+	char *split_dirname;                 /* Directory name. */
+	char *split_filename;                /* File name. */
+
 #if USE_IFACE == IFACE_KQUEUE
 	int file_changed;
 	time_t file_ctime;
@@ -249,8 +252,8 @@ int watchpoint_attach_directory_sentinel(struct watchpoint *wpt);
 int watch_pathname(struct watchpoint *parent, const char *dirname, int isdir,
 		   int notify);
 
-char *split_pathname(struct watchpoint *dp, char **dirname);
-void unsplit_pathname(struct watchpoint *dp);
+char const *watchpoint_extract_filename(struct watchpoint *dp,
+					char const **dirname);
 
 int ev_format(event_mask ev, char **gen, char **sys);
 void ev_log(int prio, struct watchpoint *dp, event_mask ev, char *prefix);

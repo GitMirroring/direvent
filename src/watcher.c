@@ -36,6 +36,8 @@ watchpoint_unref(struct watchpoint *wpt)
 	watchpoint_recent_deinit(wpt);
 	free(wpt->dirname);
 	handler_list_unref(wpt->handler_list);
+	free(wpt->split_dirname);
+	free(wpt->split_filename);
 	free(wpt);
 }
 
@@ -348,13 +350,13 @@ int
 watchpoint_install_sentinel(struct watchpoint *wpt)
 {
 	struct watchpoint *sent;
-	char *dirname;
-	char *filename;
+	char const *dirname;
+	char const *filename;
 	struct handler *hp;
 	event_mask ev_mask;
 	struct sentinel *sentinel;
 	
-	filename = split_pathname(wpt, &dirname);
+	filename = watchpoint_extract_filename(wpt, &dirname);
 	sent = watchpoint_install(dirname, NULL);
 
 	getevt("create", &ev_mask);
@@ -372,7 +374,6 @@ watchpoint_install_sentinel(struct watchpoint *wpt)
 	
 	filpatlist_add_exact(&hp->fnames, filename);
 	handler_list_append(sent->handler_list, hp);
-	unsplit_pathname(wpt);
 	diag(LOG_NOTICE, _("installing CREATE sentinel for %s"), wpt->dirname);
 	return watchpoint_init(sent);
 }
@@ -666,26 +667,22 @@ shutdown_watchers(void)
 }
 
 
-char *
-split_pathname(struct watchpoint *dp, char **dirname)
+char const *
+watchpoint_extract_filename(struct watchpoint *dp, char const **dirname)
 {
-	char *p = strrchr(dp->dirname, '/');
-	if (p) {
-		dp->split_p = p;
-		*p++ = 0;
-		*dirname = dp->dirname;
-	} else {
-		p = dp->dirname;
-		*dirname = ".";
-	}
-	return p;
-}
+	if (dp->split_dirname == NULL) {
+		char *p;
 
-void
-unsplit_pathname(struct watchpoint *dp)
-{
-	if (dp->split_p) {
-		*dp->split_p = '/';
-		dp->split_p = NULL;
+		dp->split_dirname = estrdup(dp->dirname);
+		p = strrchr(dp->split_dirname, '/');
+		if (p) {
+			*p++ = 0;
+			dp->split_filename = estrdup(p);
+		} else {
+			dp->split_filename = dp->split_dirname;
+			dp->split_dirname = estrdup(".");
+		}
 	}
+	*dirname = dp->split_dirname;
+	return dp->split_filename;
 }

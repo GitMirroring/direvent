@@ -217,7 +217,7 @@ endopt:
 						if (argc-- == 0) {
 							fprintf(stderr,
 								"%s requires argument\n",
-								arg);
+								opt);
 							return 2;
 						}
 						arg = *argv++;

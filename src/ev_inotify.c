@@ -199,7 +199,7 @@ static void
 process_event(struct inotify_event *ep)
 {
 	struct watchpoint *wpt;
-	char *dirname, *filename;
+	char const *dirname, *filename;
 	event_mask event;
 	
 	wpt = wpget(ep->wd);
@@ -261,7 +261,7 @@ process_event(struct inotify_event *ep)
 			}
 			return;
 		}
-		filename = split_pathname(wpt, &dirname);
+		filename = watchpoint_extract_filename(wpt, &dirname);
 	} else {
 		dirname = wpt->dirname;
 		filename = ep->name;
@@ -279,12 +279,10 @@ process_event(struct inotify_event *ep)
 		}
 	}
 	if (debug_level > 0)
-		ev_log(LOG_DEBUG, wpt, event, ep->name);
+		ev_log(LOG_DEBUG, wpt, event, ep->len == 0 ? NULL : ep->name);
 
 	watchpoint_run_handlers(wpt, event, dirname, filename);
 	
-	unsplit_pathname(wpt);
-
 	if (ep->mask & (IN_DELETE|IN_MOVED_FROM)) {
 		debug(1, (_("%s/%s deleted"), wpt->dirname, ep->name));
 		remove_watcher(wpt->dirname, ep->name);
