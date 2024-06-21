@@ -64,7 +64,7 @@ compvar(char *enva, char *envb, int lazy)
 				return 0;
 			break;
 		}
-		if (c = *enva - *envb)
+		if ((c = *enva - *envb))
 			return c;
 		if (*enva == '=' || *envb == '=')
 			return c;

@@ -106,7 +106,7 @@ vdiag(int prio, const char *fmt, va_list ap)
 				*p++ = *s++;
 			*p++ = ']';
 			*p++ = ' ';
-			while (*p++ = *fmt++);
+			while ((*p++ = *fmt++) != 0);
 			vsyslog(prio, fmtbuf, ap);
 		} else			
 			vsyslog(prio, fmt, ap);
@@ -339,7 +339,7 @@ get_user_groups(uid_t uid, size_t *pgidc, gid_t **pgidv)
 	gidc = 1;
 	
 	setgrent();
-	while (gr = getgrent()) {
+	while ((gr = getgrent()) != NULL) {
 		char **p;
 		for (p = gr->gr_mem; *p; p++)
 			if (strcmp(*p, pw->pw_name) == 0) {

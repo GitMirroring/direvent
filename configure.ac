@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GNU direvent.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.71])
 AC_INIT([GNU direvent], [5.3.90], [bug-direvent@gnu.org.ua], [direvent],
         [http://www.gnu.org.ua/software/direvent])
 AC_CONFIG_SRCDIR([src/direvent.c])
@@ -28,7 +28,6 @@ AM_SILENT_RULES([yes])
 # Checks for programs.
 AC_PROG_AWK
 AC_PROG_CC
-DEVT_CC_PAREN_QUIRK
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
@@ -102,12 +101,11 @@ GRECS_HOST_PROJECT_INCLUDES='-I$(top_srcdir)/src'
 # Gettext.
 AM_ICONV
 AM_GNU_GETTEXT([external], [need-formatstring-macros])
-AM_GNU_GETTEXT_VERSION([0.18])
+AM_GNU_GETTEXT_VERSION([0.19])
 
 AC_SUBST(INCLUDE_PATH_ARGS,['$(pkgdatadir)/include:$(pkgdatadir)/$(VERSION)/include'])
 AC_ARG_WITH([include-path],
-            [AC_HELP_STRING([--with-include-path=PATH],
-	         [set direvent runtime include path])],
+            [AS_HELP_STRING([--with-include-path=PATH],[set direvent runtime include path])],
             [INCLUDE_PATH_ARGS=$withval])
 INCLUDE_PATH_ARGS=$(echo "$INCLUDE_PATH_ARGS" | sed 's/:/\",\"/g;s/^/\"/;s/$/\"/')
 

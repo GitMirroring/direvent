@@ -392,7 +392,7 @@ get_user_groups(char *user, gid_t gid, size_t *pgidc, gid_t **pgidv)
 	gidc = 1;
 	
 	setgrent();
-	while (gr = getgrent()) {
+	while ((gr = getgrent()) != NULL) {
 		char **p;
 		for (p = gr->gr_mem; *p; p++)
 			if (strcmp(*p, user) == 0) {
