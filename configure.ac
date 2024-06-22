@@ -40,7 +40,7 @@ AC_CHECK_HEADERS([sys/inotify.h sys/event.h])
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
-AC_CHECK_FUNCS([inotify_init kqueue rfork])
+AC_CHECK_FUNCS([inotify_init kqueue rfork getgrouplist])
 
 if test "$ac_cv_header_sys_inotify_h/$ac_cv_func_inotify_init" = yes/yes; then
   iface=inotify

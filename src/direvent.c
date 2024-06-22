@@ -23,6 +23,7 @@
 #include <signal.h>
 #include <grecs.h>
 #include <locale.h>
+#include <limits.h>
 #include "wordsplit.h"
 
 #ifndef SYSCONFDIR
@@ -307,6 +308,7 @@ storepid(const char *pidfile)
 	}
 }
 
+#if !HAVE_GETGROUPLIST
 static int
 membergid(gid_t gid, size_t gc, gid_t *gv)
 {
@@ -316,6 +318,11 @@ membergid(gid_t gid, size_t gc, gid_t *gv)
 			return 1;
 	return 0;
 }
+#endif
+
+#ifndef SIZE_T_MAX
+# define SIZE_T_MAX ((size_t)-1)
+#endif
 
 static void
 get_user_groups(uid_t uid, size_t *pgidc, gid_t **pgidv)
@@ -323,18 +330,40 @@ get_user_groups(uid_t uid, size_t *pgidc, gid_t **pgidv)
 	size_t gidc = 0, n = 0;
 	gid_t *gidv = NULL;
 	struct passwd *pw;
+#ifndef HAVE_GETGROUPLIST
 	struct group *gr;
-
+#endif
 	pw = getpwuid(uid);
 	if (!pw) {
 		diag(LOG_ERR, 0, _("no user with UID %lu"),
 		     (unsigned long)uid);
 		exit(2);
 	}
-	
+
 	n = 32;
 	gidv = ecalloc(n, sizeof(gidv[0]));
-		
+
+#if HAVE_GETGROUPLIST
+	for (;;) {
+		int max_groups = (int) n;
+		int ng = getgrouplist(pw->pw_name, pw->pw_gid, gidv, &max_groups);
+		if (ng >= 0) {
+			/* On some systems getgrouplist returns 0 on success.
+			 */
+			gidc = ng > 0 ? ng : max_groups;
+			break;
+		}
+
+		/* Work around a bug on Darwin, where getgrouplist
+		   fails to increase max_groups. */
+		if (n == max_groups) {
+			if (INT_MAX / 3 * 2 <= n)
+				nomem_abend ();
+			n += (n + 1) / 2;
+		}
+		gidv = erealloc(gidv, n * sizeof (gidv[0]));
+	}
+#else
 	gidv[0] = pw->pw_gid;
 	gidc = 1;
 	
@@ -344,7 +373,9 @@ get_user_groups(uid_t uid, size_t *pgidc, gid_t **pgidv)
 		for (p = gr->gr_mem; *p; p++)
 			if (strcmp(*p, pw->pw_name) == 0) {
 				if (n == gidc) {
-					n += 32;
+					if (SIZE_T_MAX / 3 * 2 <= n)
+						nomem_abend();
+					n += (n + 1) / 2;
 					gidv = erealloc(gidv,
 							n * sizeof(gidv[0]));
 				}
@@ -353,6 +384,7 @@ get_user_groups(uid_t uid, size_t *pgidc, gid_t **pgidv)
 			}
 	}
 	endgrent();
+#endif
 	*pgidc = gidc;
 	*pgidv = gidv;
 }
