@@ -1,4 +1,4 @@
-direvent -- history of user-visible changes. 2024-06-04
+direvent -- history of user-visible changes. 2024-06-22
 Copyright (C) 2012-2024 Sergey Poznyakoff
 See the end of file for copying conditions.
 
@@ -6,8 +6,25 @@ Please send direvent bug reports to <bug-direvent@gnu.org.ua>
 
 Version 5.3.90 (git)
 
+* Simultaneous execution limits
+
+It is possible to limit number of command instances that are allowed
+to run simultaneosly for a particular watcher.  This is done using
+the 'max-instances' statement in 'watcher' section.
+
+* Restore the nowait default
+
+Unless given the 'nowait' option explicitly, watchers waited for the
+handler to terminate.  It is now fixed and 'nowait' is the default, as
+described in the documentation.
+
 * Fix bug in generic to system event translation
 
+* Fix sentinel code
+
+In some cases setting the sentinel effectively removed the original
+watcher.  That happened if the full file name of the original watcher
+and its directory part produced the same hash.
 
 Version 5.3, 2021-12-30
 

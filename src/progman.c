@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -57,6 +57,7 @@ struct process {
 	unsigned timeout;       /* Timeout in seconds */
 	pid_t pid;              /* PID */
 	time_t start;           /* Time when the process started */
+	struct prog_handler *hp;/* Originating handler */
 	union {
                 /* Pointers to logger processes, if
 		   type == PROC_HANDLER (NULL if no logger) */
@@ -107,7 +108,8 @@ proc_push(struct process **pp, struct process *p)
 /* Process list handling (high-level) */
 
 struct process *
-register_process(int type, pid_t pid, time_t t, unsigned timeout)
+register_process(int type, pid_t pid, time_t t, unsigned timeout,
+		 struct prog_handler *hp)
 {
 	struct process *p;
 
@@ -120,26 +122,9 @@ register_process(int type, pid_t pid, time_t t, unsigned timeout)
 	p->timeout = timeout;
 	p->pid = pid;
 	p->start = t;
+	p->hp = hp;
 	proc_push(&proc_list, p);
 	return p;
-}
-
-void
-deregister_process(pid_t pid, time_t t)
-{
-	struct process *p;
-
-	for (p = proc_list; p; p = p->next)
-		if (p->pid == pid) {
-			if (p->prev)
-				p->prev->next = p->next;
-			else
-				proc_list = p;
-			if (p->next)
-				p->next->prev = p->prev;
-			free(p);
-			break;
-		}
 }
 
 struct process *
@@ -238,6 +223,8 @@ process_cleanup(int expect_term)
 					p->v.logger[LOGGER_ERR]->v.master = NULL;
 			}
 			p->pid = 0;
+			if (p->hp)
+				p->hp->run_count--;
 			proc_unlink(&proc_list, p);
 			proc_push(&proc_avail, p);
 		}
@@ -356,7 +343,7 @@ open_logger(const char *tag, int prio, struct process **return_proc)
 			  tag, (unsigned long) pid));
 		close(p[0]);
 		*return_proc = register_process(PROC_LOGGER, pid, 
-						time(NULL), 0);
+						time(NULL), 0, NULL);
 		return p[1];
 	}
 }
@@ -637,6 +624,19 @@ prog_handler_run(struct watchpoint *wp, event_mask *event,
 
 	if (!hp->command || !notify)
 		return 0;
+
+	if (hp->max_count > 0 && hp->run_count == hp->max_count) {
+		char *sys, *gen;
+
+		if (ev_format(*event, &gen, &sys)) {
+			diag(LOG_ERR, "%s", _("out of memory"));
+			sys = "?";
+		}
+		diag(LOG_NOTICE,
+		     "%s: ignoring event %s: %zu instances already running",
+		     wp->dirname, sys, hp->run_count);
+		return 0;
+	}
 	
 	debug(1, (_("starting %s, dir=%s, file=%s"),
 		  hp->command, dirname, file));
@@ -700,10 +700,12 @@ prog_handler_run(struct watchpoint *wp, event_mask *event,
 	}
 
 	/* master */
-	debug(1, (_("%s running; dir=%s, file=%s, pid=%lu"),
-		  hp->command, dirname, file, (unsigned long)pid));
+	hp->run_count++;
 
-	p = register_process(PROC_HANDLER, pid, time(NULL), hp->timeout);
+	debug(1, (_("%s running; run_count=%zu; dir=%s, file=%s, pid=%lu"),
+		  hp->command, hp->run_count, dirname, file, (unsigned long)pid));
+
+	p = register_process(PROC_HANDLER, pid, time(NULL), hp->timeout, hp);
 
 	if (logger_proc[LOGGER_OUT]) {
 		logger_proc[LOGGER_OUT]->v.master = p;
@@ -718,18 +720,17 @@ prog_handler_run(struct watchpoint *wp, event_mask *event,
 	close(logger_fd[LOGGER_OUT]);
 	close(logger_fd[LOGGER_ERR]);
 
-	if (hp->flags & HF_NOWAIT) {
-		return 0;
+	if (hp->flags & HF_WAIT) {
+		debug(2, (_("waiting for %s (%lu) to terminate"),
+			  hp->command, (unsigned long)pid));
+		while (time(NULL) - p->start < 2 * p->timeout) {
+			sleep(1);
+			process_cleanup(1);
+			if (p->pid == 0)
+				break;
+		}
 	}
 
-	debug(2, (_("waiting for %s (%lu) to terminate"),
-		  hp->command, (unsigned long)pid));
-	while (time(NULL) - p->start < 2 * p->timeout) {
-		sleep(1);
-		process_cleanup(1);
-		if (p->pid == 0)
-			break;
-	}
 	return 0;
 }
 

@@ -1164,6 +1164,7 @@ watcher @{
     timeout @var{number};
     environ @{ ... @};
     option @var{string-list};
+    max-instances @var{number};
 @}
 @end group
 @end example
@@ -1322,6 +1323,11 @@ global @code{environ} statement, if any.
 For compatibility with earlier versions of the program, @GNUDIREVENT
 also supports a @dfn{legacy syntax} of the @code{environ} statement.
 It is described in @ref{environ legacy syntax}.
+@end deffn
+
+@deffn {Config} max-instances @var{number}
+Sets maximum number of handler command instances that are allowed to run
+simultaneously.  Default is unlimited.
 @end deffn
 
 @node System dependencies

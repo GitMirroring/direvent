@@ -493,9 +493,9 @@ cb_option(enum grecs_callback_command cmd, grecs_node_t *node,
 					    GRECS_TYPE_STRING))
 			return 1;
 		if (strcmp(vp->v.string, "nowait") == 0)
-			eventconf.prog_handler.flags |= HF_NOWAIT;
+			eventconf.prog_handler.flags &= ~HF_WAIT;
 		else if (strcmp(vp->v.string, "wait") == 0)
-			eventconf.prog_handler.flags &= ~HF_NOWAIT;
+			eventconf.prog_handler.flags |= HF_WAIT;
 		else if (strcmp(vp->v.string, "stdout") == 0)
 			eventconf.prog_handler.flags |= HF_STDOUT;
 		else if (strcmp(vp->v.string, "stderr") == 0)
@@ -855,6 +855,9 @@ static struct grecs_keyword watcher_kw[] = {
 	  N_("Modify environment (legacy form)"),
 	  grecs_type_string, GRECS_DFLT, NULL, 0,
 	  cb_environ },
+	{ "max-instances", NULL,
+	  N_("Maximum number of instances running simultaneously."),
+	  grecs_type_size, GRECS_DFLT, &eventconf.prog_handler.max_count },
 	{ NULL }
 };
 

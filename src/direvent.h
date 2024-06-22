@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -40,7 +40,7 @@
 #define GENEV_CHANGE   0x10
 
 /* Handler flags. */
-#define HF_NOWAIT  0x01   /* Don't wait for termination */
+#define HF_WAIT    0x01   /* Wait for termination */
 #define HF_STDOUT  0x02   /* Capture stdout */
 #define HF_STDERR  0x04   /* Capture stderr */
 #define HF_SHELL   0x08   /* Call program via /bin/sh -c */ 
@@ -146,6 +146,8 @@ struct prog_handler {
 	size_t gidc;   /* Number of elements in gidv */
 	unsigned timeout; /* Handler timeout */
 	envop_t *envop;   /* Environment setup program */
+	size_t max_count; /* Max. number of simultaneous programs. */
+	size_t run_count; /* Number of running processes. */
 };
 
 struct handler *prog_handler_alloc(event_mask ev_mask, filpatlist_t fpat,
