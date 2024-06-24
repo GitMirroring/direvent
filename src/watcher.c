@@ -485,7 +485,9 @@ watchpoint_init(struct watchpoint *wpt)
 
 	if (stat(wpt->dirname, &st)) {
 		if (errno == ENOENT) {
-			return watchpoint_install_sentinel(wpt);
+			int rc = watchpoint_install_sentinel(wpt);
+			watchpoint_remove(wpt->dirname);
+			return rc;
 		} else {
 			diag(LOG_ERR, _("cannot set watcher on %s: %s"),
 			     wpt->dirname, strerror(errno));

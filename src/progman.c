@@ -633,8 +633,13 @@ prog_handler_run(struct watchpoint *wp, event_mask *event,
 			sys = "?";
 		}
 		diag(LOG_NOTICE,
-		     "%s: ignoring event %s: %zu instances already running",
-		     wp->dirname, sys, hp->run_count);
+		     "%s: ignoring event %s (%s): %zu instances already running",
+		     wp->dirname,
+		     gen[0] ? gen : "0",
+		     sys[0] ? sys : "0",
+		     hp->run_count);
+		free(sys);
+		free(gen);
 		return 0;
 	}
 	

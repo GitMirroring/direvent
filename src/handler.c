@@ -250,7 +250,7 @@ handler_list_remove(handler_list_t hlist, struct handler *hp)
 				itr->advanced = 1;
 			}
 	}
-	
+	handler_unref(hp);
 	grecs_list_remove_entry(hlist->list, ep);
 	return grecs_list_size(hlist->list);
 }
