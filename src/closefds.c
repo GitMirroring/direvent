@@ -1,6 +1,6 @@
 /* This file is part of GNU direvent
-   Copyright (C) 2015-2022 Sergey Poznyakoff
-  
+   Copyright (C) 2015-2024 Sergey Poznyakoff
+
    GNU direvent is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 3, or (at your option)
@@ -67,7 +67,7 @@ close_fds_sys (int minfd)
     }
 
   n /= PROC_PIDLISTFD_SIZE;
-  
+
   for (i = 0; i < n; i++)
     {
       if (fdinfo_buf[i].proc_fd >= minfd)
@@ -88,7 +88,7 @@ close_fds_sys (int minfd)
 {
   DIR *dir;
   struct dirent *ent;
-  
+
   dir = opendir ("/proc/self/fd");
   if (!dir)
     return -1;
@@ -96,7 +96,7 @@ close_fds_sys (int minfd)
     {
       long n;
       char *p;
-      
+
       if (ent->d_name[0] == '.')
 	continue;
 

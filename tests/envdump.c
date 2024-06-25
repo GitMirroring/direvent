@@ -1,6 +1,6 @@
 /* envdump.c - dump execution environment
    This file is part of GNU direvent testsuite.
-   Copyright (C) 2013-2022 Sergey Poznyakoff
+   Copyright (C) 2013-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -30,7 +30,7 @@ agetcwd()
 {
 	char *buf = NULL;
 	size_t bufsize = 128;
-	
+
 	for (;;) {
 		errno = 0;
 		buf = malloc(bufsize);
@@ -69,7 +69,7 @@ compvar(char *enva, char *envb, int lazy)
 		if (*enva == '=' || *envb == '=')
 			return c;
 	}
-	
+
 	return *enva - *envb;
 }
 
@@ -116,7 +116,7 @@ strtosig(char *str)
 	struct sigtab *sp;
 	int sig;
 	char *end;
-		
+
 	if (strncmp(str, "SIG", 3) == 0)
 		str += 3;
 	for (sp = sigtab; sp->name; sp++)
@@ -186,7 +186,7 @@ main(int argc, char **argv)
 	int sig = SIGHUP;
 	int print_args = 1;
 	int print_cwd = 1;
-	
+
 	progname = strrchr(argv[0], '/');
 	if (progname)
 		progname++;
@@ -232,7 +232,7 @@ main(int argc, char **argv)
 		}
 	} else
 		fp = stderr;
-	
+
 	fprintf(fp, "# Dump of execution environment\n");
 	if (print_cwd) {
 		p = agetcwd();
@@ -267,7 +267,7 @@ main(int argc, char **argv)
 		}
 		itab[i] = NULL;
 	}
-		
+
 	fprintf(fp, "# Environment\n");
 	for (i = 0; environ[i]; i++) {
 		if (!itab || locate(itab, environ[i]))
@@ -280,4 +280,3 @@ main(int argc, char **argv)
 
 	return 0;
 }
-	

@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -77,7 +77,7 @@ vdiag(int prio, const char *fmt, va_list ap)
 {
 	const char *s;
 	va_list tmp;
-	
+
 	if (log_to_stderr >= prio) {
 		fprintf(stderr, "%s: ", program_name);
 		s = severity(prio);
@@ -95,7 +95,7 @@ vdiag(int prio, const char *fmt, va_list ap)
 			static size_t fmtsize;
 			size_t len = strlen(fmt) + strlen(s) + 4;
 			char *p;
-			
+
 			if (len > fmtsize) {
 				fmtbuf = erealloc(fmtbuf, len);
 				fmtsize = len;
@@ -109,7 +109,7 @@ vdiag(int prio, const char *fmt, va_list ap)
 			*p++ = ' ';
 			while ((*p++ = *fmt++) != 0);
 			vsyslog(prio, fmtbuf, ap);
-		} else			
+		} else
 			vsyslog(prio, fmt, ap);
 	}
 }
@@ -123,7 +123,7 @@ diag(int prio, const char *fmt, ...)
 	vdiag(prio, fmt, ap);
 	va_end(ap);
 }
-	
+
 void
 debugprt(const char *fmt, ...)
 {
@@ -238,7 +238,7 @@ char *
 trans_toknext(struct transtab *tab, int tok, int *next)
 {
 	int i;
-	
+
 	for (i = *next; tab[i].name; i++)
 		if (tab[i].tok & tok) {
 			*next = i + 1;
@@ -271,7 +271,7 @@ trans_stat(struct transtab *tab, size_t *psize)
 		*psize = size;
 	return i;
 }
-	
+
 
 
 /* Command line processing and auxiliary functions */
@@ -366,7 +366,7 @@ get_user_groups(uid_t uid, size_t *pgidc, gid_t **pgidv)
 #else
 	gidv[0] = pw->pw_gid;
 	gidc = 1;
-	
+
 	setgrent();
 	while ((gr = getgrent()) != NULL) {
 		char **p;
@@ -395,7 +395,7 @@ setuser(const char *user)
 	struct passwd *pw;
 	size_t gidc;
 	gid_t *gidv;
-		
+
 	pw = getpwnam(user);
 	if (!pw) {
 		diag(LOG_CRIT, "getpwnam(%s): %s", user, strerror(errno));
@@ -435,7 +435,7 @@ flags_format(int flags, struct transtab *tab, size_t *psize)
 {
 	size_t size = *psize;
 	char *buf;
-	
+
 	if (!size) {
 		size_t count = trans_stat(tab, &size);
 		size += count;
@@ -454,7 +454,7 @@ flags_format(int flags, struct transtab *tab, size_t *psize)
 			while (*p)
 				*q++ = *p++;
 		}
-		*q = 0;	
+		*q = 0;
 	}
 	return buf;
 }
@@ -471,13 +471,13 @@ ev_format(event_mask ev, char **gen, char **sys)
 {
 	static size_t gen_size, sys_size;
 	int r = 0;
-	
+
 	if (gen) {
 		if ((*gen = flags_format(ev.gen_mask, genev_transtab,
 					 &gen_size)) == NULL)
 			r = -1;
 	}
-	
+
 	if (sys) {
 		if ((*sys = flags_format(ev.sys_mask, sysev_transtab,
 					 &sys_size)) == NULL) {
@@ -542,7 +542,7 @@ self_test()
 {
 	pid_t pid;
 	char *args[4];
-	
+
 	pid = fork();
 	if (pid == (pid_t)-1) {
 		diag(LOG_CRIT,
@@ -550,7 +550,7 @@ self_test()
 		     self_test_prog, strerror(errno));
 		exit(2);
 	}
-	
+
 	if (pid != 0) {
 		self_test_pid = pid;
 		return;
@@ -597,7 +597,7 @@ main(int argc, char **argv)
 	tag = estrdup(program_name);
 
 	config_init();
-	
+
 	parse_options(argc, argv, &i);
 
 	argc -= i;
@@ -630,7 +630,7 @@ main(int argc, char **argv)
 		facility = LOG_DAEMON;
 	if (opt_user)
 		user = opt_user;
-	
+
 	if (facility > 0) {
 		openlog(tag, LOG_PID, facility);
 		grecs_log_to_stderr = 0;
@@ -646,7 +646,7 @@ main(int argc, char **argv)
 		}
 		log_to_stderr = -1;
 	}
-	
+
 	diag(LOG_INFO, _("%s %s started"), program_name, VERSION);
 
 	/* Write pidfile */
@@ -661,7 +661,7 @@ main(int argc, char **argv)
 
 	if (self_test_prog)
 		self_test();
-	
+
 	/* Main loop */
 	while (!stop && sysev_select() == 0) {
 		synthetic_event_flush();
@@ -676,6 +676,6 @@ main(int argc, char **argv)
 
 	if (pidfile)
 		unlink(pidfile);
-	
+
 	return exit_code;
 }

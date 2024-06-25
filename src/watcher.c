@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -110,7 +110,7 @@ static void
 watchpoint_recent_unlink(struct watchpoint *wp)
 {
 	struct watchpoint *p;
-	
+
 	if ((p = wp->rhead.prev) != NULL)
 		p->rhead.next = wp->rhead.next;
 	else
@@ -167,7 +167,7 @@ watchpoint_recent_cleanup(void)
 	struct timeval now;
 	struct watchpoint *wp;
 	int d = 0;
-	
+
 	gettimeofday(&now, NULL);
 	for (wp = recent_head; wp; ) {
 		struct watchpoint *next = wp->rhead.next;
@@ -205,7 +205,7 @@ watchpoint_install(const char *path, int *pnew)
 	key.wpt = &wpkey;
 	ent = grecs_symtab_lookup_or_install(nametab, &key, &install);
 	if (install) {
-	        struct watchpoint *wpt = ecalloc(1, sizeof(*wpt));
+		struct watchpoint *wpt = ecalloc(1, sizeof(*wpt));
 		wpt->dirname = estrdup(path);
 		wpt->wd = -1;
 		wpt->handler_list = handler_list_create();
@@ -241,15 +241,15 @@ watchpoint_install_ptr(struct watchpoint *wpt)
 	struct wpref key;
 	int install = 1;
 	key.wpt = wpt;
-	
+
 	if (!grecs_symtab_lookup_or_install(nametab, &key, &install)) {
 		diag(LOG_CRIT, _("not enough memory"));
 		exit(1);
 	}
 	watchpoint_ref(wpt);
 	return wpt;
-}	
-	
+}
+
 static void
 wpref_destroy(void *data)
 {
@@ -325,7 +325,7 @@ sentinel_handler_run(struct watchpoint *wp, event_mask *event,
 	watchpoint_init(wpt);
 	watchpoint_install_ptr(wpt);
 	deliver_ev_create(wpt, dirname, file, notify);
-	
+
 	if (handler_list_remove(wp->handler_list, sentinel->hp) == 0) {
 		if (!watchpoint_gc_list) {
 			watchpoint_gc_list = grecs_list_create();
@@ -355,7 +355,7 @@ watchpoint_install_sentinel(struct watchpoint *wpt)
 	event_mask ev_mask;
 	struct sentinel *sentinel;
 	int rc;
-	
+
 	filename = watchpoint_extract_filename(wpt, &dirname);
 	sent = watchpoint_install(dirname, NULL);
 
@@ -368,10 +368,10 @@ watchpoint_install_sentinel(struct watchpoint *wpt)
 	sentinel->watchpoint = wpt;
 	sentinel->hp = hp;
 	watchpoint_ref(wpt);
-	
+
 	hp->data = sentinel;
 	hp->notify_always = 1;
-	
+
 	filpatlist_add_exact(&hp->fnames, filename);
 	handler_list_append(sent->handler_list, hp);
 	diag(LOG_NOTICE, _("installing CREATE sentinel for %s"), wpt->dirname);
@@ -408,7 +408,7 @@ directory_sentinel_handler_run(struct watchpoint *wp, event_mask *event,
 	int filemask = watchpoint_filemask(parent);
 	struct watchpoint *wpt;
 	int rc = 0;
-	
+
 	filename = mkfilename(dirname, file);
 	if (!filename) {
 		diag(LOG_ERR,
@@ -431,7 +431,7 @@ directory_sentinel_handler_run(struct watchpoint *wp, event_mask *event,
 		else {
 			if ((wpt->depth = parent->depth) > 0)
 				wpt->depth--;
-			
+
 			wpt->handler_list = handler_list_copy(parent->handler_list);
 			if (USE_IFACE == IFACE_KQUEUE || wpt->depth)
 				watchpoint_attach_directory_sentinel(wpt);
@@ -443,7 +443,7 @@ directory_sentinel_handler_run(struct watchpoint *wp, event_mask *event,
 				grecs_list_append(watchpoint_gc_list, wpt);
 			} else {
 				wpt->parent = parent;
-		
+
 				if (watchpoint_init(wpt)) {
 					//FIXME watchpoint_free(wpt);
 					rc = -1;
@@ -464,7 +464,7 @@ watchpoint_attach_directory_sentinel(struct watchpoint *wpt)
 	struct handler *hp;
 	event_mask ev_mask;
 	struct sentinel *sentinel;
-	
+
 	getevt("create", &ev_mask);
 	hp = handler_alloc(ev_mask);
 	hp->run = directory_sentinel_handler_run;
@@ -474,27 +474,27 @@ watchpoint_attach_directory_sentinel(struct watchpoint *wpt)
 	sentinel->watchpoint = wpt;
 	sentinel->hp = hp;
 	watchpoint_ref(wpt);
-	
+
 	hp->data = sentinel;
 	hp->notify_always = 1;
-	
+
 	handler_list_append_cow(&wpt->handler_list, hp);
 	diag(LOG_NOTICE,
 	     wpt->isdir
 	       ? _("installing CREATE sentinel for %s/*")
 	       : _("installing CREATE sentinel for file %s"),
 	     wpt->dirname);
-		
+
 	return 0;
 }
 
-int 
+int
 watchpoint_init(struct watchpoint *wpt)
 {
 	struct stat st;
 	event_mask mask = { 0, 0 };
 	struct handler *hp;
-	handler_iterator_t itr;	
+	handler_iterator_t itr;
 	int wd;
 
 	debug(1, (_("creating watcher %s"), wpt->dirname));
@@ -512,7 +512,7 @@ watchpoint_init(struct watchpoint *wpt)
 	}
 
 	wpt->isdir = S_ISDIR(st.st_mode);
-	
+
 	for_each_handler(wpt, itr, hp) {
 		mask.sys_mask |= hp->ev_mask.sys_mask;
 		mask.gen_mask |= hp->ev_mask.gen_mask;
@@ -581,7 +581,7 @@ watch_subdirs(struct watchpoint *parent, int notify)
 	if (filemask == 0 && !notify) {
 		return 0;
 	}
-	
+
 	dir = opendir(parent->dirname);
 	if (!dir) {
 		diag(LOG_ERR, _("cannot open directory %s: %s"),
@@ -601,12 +601,12 @@ watch_subdirs(struct watchpoint *parent, int notify)
 				     parent->dirname, strerror(errno));
 			break;
 		}
-		
+
 		if (ent->d_name[0] == '.' &&
 		    (ent->d_name[1] == 0 ||
 		     (ent->d_name[1] == '.' && ent->d_name[2] == 0)))
 			continue;
-		
+
 		dirname = mkfilename(parent->dirname, ent->d_name);
 		if (!dirname) {
 			diag(LOG_ERR,
@@ -636,7 +636,7 @@ setwatcher(void *ent, void *data)
 {
 	struct wpref *wpref = (struct wpref *) ent;
 	struct watchpoint *wpt = wpref->wpt;
-	
+
 	if (wpt->wd == -1 && watchpoint_init(wpt) == 0)
 		watch_subdirs(wpt, 0);
 	return 0;
@@ -649,7 +649,7 @@ checkwatcher(void *ent, void *data)
 	struct watchpoint *wpt = wpref->wpt;
 	return wpt->wd >= 0;
 }
-	
+
 void
 setup_watchers(void)
 {
@@ -708,6 +708,12 @@ watchpoint_extract_filename(struct watchpoint *dp, char const **dirname)
 /*
  * Support for synthetic events.
  */
+
+struct synthetic_event {
+	event_mask mask;
+	char *dirname;
+	char *filename;
+};
 
 static grecs_list_ptr_t synth_event_list;
 

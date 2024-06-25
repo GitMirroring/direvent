@@ -1,5 +1,5 @@
 # This file is part of GNU direvent -*- autoconf -*-
-# Copyright (C) 2012-2022 Sergey Poznyakoff
+# Copyright (C) 2012-2024 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ ChangeLog:
 	$(AM_V_GEN)if test -d .git; then                                   \
 		git log --pretty='format:%ct  %an  <%ae>%n%n%s%n%n%b%n' |  \
 		awk -f $(top_builddir)/grecs/build-aux/git2chg.awk > ChangeLog; \
-        fi
+	fi
 
 
 EXTRA_DIST = build-aux/config.rpath

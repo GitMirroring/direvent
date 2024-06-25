@@ -1,5 +1,5 @@
 # This file is part of GNU direvent testsuite. -*- Autotest -*-
-# Copyright (C) 2014-2022 Sergey Poznyakoff
+# Copyright (C) 2014-2024 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ watcher {
 	command "$TESTDIR/envdump -s -i DIREVENT_FILE=:DIREVENT_GENEV_NAME= -f $outfile -a -k\$self_test_pid";
 }
 ],
-[echo "x" > dir/file 
+[echo "x" > dir/file
 rm dir/file],
 [outfile=$cwd/dump
 mkdir dir
@@ -69,4 +69,3 @@ DIREVENT_GENEV_NAME=delete
 ])
 
 AT_CLEANUP
-

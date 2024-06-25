@@ -1,5 +1,5 @@
 /* Environment-specific globbing pattern matching for GNU direvent.
-   Copyright (C) 2019-2022 Sergey Poznyakoff
+   Copyright (C) 2019-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ match_char_class (char const **pexpr, char c)
   int res;
   int rc;
   char const *expr = *pexpr;
-  
+
   expr++;
   if (*expr == '^')
     {
@@ -47,7 +47,7 @@ match_char_class (char const **pexpr, char c)
     rc = c == *expr++;
   else
     rc = !res;
-  
+
   for (; *expr && *expr != ']'; expr++)
     {
       if (rc == res)
@@ -101,18 +101,18 @@ wilder_match (char const *expr, char const *name, size_t len)
 	      NEXT_CHAR (name, len);
 	    }
 	  return WILD_ABORT;
-                        
+
 	case '?':
 	  expr++;
 	  NEXT_CHAR (name, len);
 	  break;
-                        
+
 	case '[':
 	  if (!match_char_class (&expr, *name))
 	    return WILD_FALSE;
 	  NEXT_CHAR (name, len);
 	  break;
-	  
+
 	case '\\':
 	  if (expr[1])
 	    {

@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -85,7 +85,7 @@ sysev_add_watch(struct watchpoint *wpt, event_mask mask)
 	if (wd >= 0) {
 		struct stat st;
 		int sysmask;
-		
+
 		if (fstat(wd, &st)) {
 			close(wd);
 			return -1;
@@ -124,14 +124,14 @@ static void
 chclosed_elim()
 {
 	int i, j;
-	
+
 	if (chclosed == -1)
 		return;
 
 	for (i = chclosed, j = chclosed + 1; j < chcnt; j++)
 		if (chtab[j].ident != -1) {
 			struct watchpoint *wpt;
-			
+
 			chtab[i] = chtab[j];
 			wpt = chtab[i].udata;
 			wpt->wd = i;
@@ -174,7 +174,7 @@ check_created(struct watchpoint *dp)
 
 		if (watchpoint_pattern_match(dp, ent->d_name))
 			continue;
-		
+
 		pathname = mkfilename(dp->dirname, ent->d_name);
 		if (!pathname) {
 			diag(LOG_ERR, "cannot stat %s/%s: not enough memory",
@@ -208,7 +208,7 @@ process_event(struct kevent *ep)
 	struct watchpoint *dp = ep->udata;
 	char const *filename, *dirname;
 	event_mask event;
-	
+
 	if (!dp) {
 		diag(LOG_NOTICE, "unrecognized event %x", ep->fflags);
 		return;
@@ -231,7 +231,7 @@ process_event(struct kevent *ep)
 	if (debug_level > 0)
 		ev_log(LOG_DEBUG, dp, event, NULL);
 
-	/* 
+	/*
 	 * If the event was reported for a non-directory, run user-installed
 	 * handlers.  Notice, that so far special handlers (such as sentinels)
 	 * are installed only for directories.  Should that change in the
@@ -242,10 +242,10 @@ process_event(struct kevent *ep)
 		synthetic_event_update(event, dirname, filename);
 		watchpoint_run_handlers(dp, event, dirname, filename);
 	}
-	
+
 	if (dp->isdir && !(ep->fflags & (NOTE_DELETE|NOTE_RENAME))) {
 		/* Check if new files have appeared. */
-		if (ep->fflags & NOTE_WRITE) 
+		if (ep->fflags & NOTE_WRITE)
 			check_created(dp);
 	}
 
@@ -253,13 +253,13 @@ process_event(struct kevent *ep)
 		debug(1, (_("%s deleted"), dp->dirname));
 		watchpoint_suspend(dp);
 	}
-}	
+}
 
 int
 sysev_select()
 {
 	int i, n;
-	
+
 	chclosed_elim();
 	n = kevent(kq, chtab, chcnt, evtab, chcnt, NULL);
 	if (n == -1) {
@@ -270,10 +270,10 @@ sysev_select()
 		}
 		diag(LOG_ERR, "kevent: %s", strerror(errno));
 		return 1;
-	} 
+	}
 
-	for (i = 0; i < n; i++) 
+	for (i = 0; i < n; i++)
 		process_event(&evtab[i]);
-		
+
 	return 0;
 }

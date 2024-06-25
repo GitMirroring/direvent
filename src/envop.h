@@ -1,5 +1,5 @@
 /* Environment and environment operation definitions for GNU direvent.
-   Copyright (C) 2019-2022 Sergey Poznyakoff
+   Copyright (C) 2019-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -65,6 +65,3 @@ int envop_entry_add (envop_t **head,
 int envop_exec (envop_t *op, environ_t *env);
 void envop_free (envop_t *op);
 int envop_cmp (struct envop_entry *a, struct envop_entry *b);
-
-
-

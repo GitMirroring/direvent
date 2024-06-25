@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -93,7 +93,7 @@ struct handler *
 handler_itr_first(struct watchpoint *wpt, handler_iterator_t *ret_itr)
 {
 	struct handler_iterator *itr;
-		
+
 	if (!wpt->handler_list)
 		return NULL;
 
@@ -102,7 +102,7 @@ handler_itr_first(struct watchpoint *wpt, handler_iterator_t *ret_itr)
 		itr_avail = itr->next;
 		if (itr_avail)
 			itr_avail->prev = NULL;
-	} else 
+	} else
 		itr = emalloc(sizeof *itr);
 
 	itr->prev = NULL;
@@ -122,12 +122,12 @@ struct handler *
 handler_itr_next(handler_iterator_t *pitr)
 {
 	struct handler_iterator *itr;
-	
+
 	if (!pitr || (itr = *pitr) == NULL)
 		return NULL;
 	if (itr->advanced)
 		itr->advanced = 0;
-	else 
+	else
 		itr->ent = itr->ent->next;
 
 	if (!itr->ent) {
@@ -139,7 +139,7 @@ handler_itr_next(handler_iterator_t *pitr)
 			itr->hlist->itr_chain = itr->next;
 		if ((p = itr->next) != NULL)
 			p->prev = itr->prev;
-			
+
 		/* Add to the available chain */
 		if (itr_avail)
 			itr_avail->prev = itr;
@@ -152,7 +152,7 @@ handler_itr_next(handler_iterator_t *pitr)
 	}
 	return handler_itr_current(itr);
 }
-		
+
 struct handler *
 handler_itr_current(handler_iterator_t itr)
 {
@@ -267,14 +267,14 @@ handler_list_remove_cow(handler_list_t *phlist, struct handler *hp)
 		handler_list_dup(phlist);
 		hlist = *phlist;
 	}
-	
+
 	for (ep = hlist->list->head; ep; ep = ep->next)
 		if (ep->data == hp)
 			break;
 	if (!ep)
 		abort();
 
-		
+
 	if (hlist->itr_chain) {
 		struct handler_iterator *itr;
 
@@ -284,8 +284,7 @@ handler_list_remove_cow(handler_list_t *phlist, struct handler *hp)
 				itr->advanced = 1;
 			}
 	}
-	
+
 	grecs_list_remove_entry(hlist->list, ep);
 	return grecs_list_size(hlist->list);
 }
-

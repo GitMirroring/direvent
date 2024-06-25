@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -41,7 +41,7 @@ detach(void (*init)())
 	int ec;
 
 	init();
-	
+
 	sigemptyset(&sa.sa_mask);
 	sa.sa_handler = SIG_IGN;
 	sa.sa_flags = 0;
@@ -60,9 +60,9 @@ detach(void (*init)())
 
 	pid = setsid();
 	ec = errno;
-	
+
 	sigaction(SIGHUP, &oldsa, NULL);
-	
+
 	if (pid == -1) {
 		errno = ec;
 		return -1;
@@ -76,8 +76,6 @@ detach(void (*init)())
 	open(_PATH_DEVNULL, O_RDONLY);
 	open(_PATH_DEVNULL, O_WRONLY);
 	dup(1);
-	
+
 	return 0;
 }
-	
-		

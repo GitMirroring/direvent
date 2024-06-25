@@ -1,5 +1,5 @@
 # This file is part of GNU direvent testsuite. -*- Autotest -*-
-# Copyright (C) 2021-2022 Sergey Poznyakoff
+# Copyright (C) 2021-2024 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ genfile -f sentinel -t 1
 AT_DATA([handler.sh],
 [#!/bin/sh
 if test -f $DIREVENT_FILE; then
-  echo "`pwd -P`/$DIREVENT_FILE created" 
+  echo "`pwd -P`/$DIREVENT_FILE created"
   if test $DIREVENT_FILE = sentinel; then
      /bin/kill -HUP $DIREVENT_SELF_TEST_PID
   fi

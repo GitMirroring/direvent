@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -55,24 +55,24 @@ filpatlist_add_pattern(filpatlist_t *fptr, struct filename_pattern *pat)
 	list = (*fptr)->list;
 	grecs_list_append(list, pat);
 }
-	
+
 void
 filpatlist_add_exact(filpatlist_t *fptr, char const *arg)
 {
 	struct filename_pattern *pat = emalloc(sizeof(*pat));
-	
+
 	pat->neg = 0;
 	pat->type = PAT_EXACT;
 	pat->v.glob = estrdup(arg);
 	filpatlist_add_pattern(fptr, pat);
-}	
+}
 
 int
 filpatlist_add(filpatlist_t *fptr, char const *arg, grecs_locus_t *loc)
 {
 	int flags = REG_EXTENDED|REG_NOSUB;
 	struct filename_pattern *pat;
-	
+
 	pat = emalloc(sizeof(*pat));
 	if (*arg == '!') {
 		pat->neg = 1;
@@ -84,7 +84,7 @@ filpatlist_add(filpatlist_t *fptr, char const *arg, grecs_locus_t *loc)
 		char *q, *p;
 
 		pat->type = PAT_REGEX;
-		
+
 		p = strchr(arg+1, '/');
 		if (!p) {
 			grecs_error(loc, 0, _("unterminated regexp"));
@@ -106,7 +106,7 @@ filpatlist_add(filpatlist_t *fptr, char const *arg, grecs_locus_t *loc)
 				return 1;
 			}
 		}
-		
+
 		*p = 0;
 		rc = regcomp(&pat->v.re, arg + 1, flags);
 		*p = '/';
@@ -154,7 +154,7 @@ filpatlist_match(filpatlist_t fp, const char *name)
 	for (ep = fp->list->head; ep; ep = ep->next) {
 		struct filename_pattern *pat = ep->data;
 		int rc;
-		
+
 		switch (pat->type) {
 		case PAT_EXACT:
 			rc = strcmp(pat->v.glob, name);

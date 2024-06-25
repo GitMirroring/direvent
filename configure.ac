@@ -1,5 +1,5 @@
 # This file is part of GNU direvent -*- autoconf -*-
-# Copyright (C) 2012-2022 Sergey Poznyakoff
+# Copyright (C) 2012-2024 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 
 AC_PREREQ([2.71])
 AC_INIT([GNU direvent], [5.3.90], [bug-direvent@gnu.org.ua], [direvent],
-        [http://www.gnu.org.ua/software/direvent])
+	[http://www.gnu.org.ua/software/direvent])
 AC_CONFIG_SRCDIR([src/direvent.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -54,7 +54,7 @@ AM_CONDITIONAL([DIREVENT_INOTIFY],[test $iface = inotify])
 AM_CONDITIONAL([DIREVENT_KQUEUE],[test $iface = kqueue])
 AC_SUBST(IFACE, $iface)
 AC_DEFINE_UNQUOTED(USE_IFACE,IFACE_`echo $iface|tr a-z A-Z`,
-                   [event notification interface to use])
+		   [event notification interface to use])
 AM_CONDITIONAL([DIREVENT_RFORK], [test "$ac_cv_func_rfork" = yes])
 AH_TOP([
 /* Supported event notification types */
@@ -62,7 +62,7 @@ AH_TOP([
 #define IFACE_KQUEUE  1  /* kqueue  - BSD */
 ])
 
-# ################################# 
+# #################################
 # Select interface used to close file descriptors greater than or
 # equal to the given one.
 #
@@ -78,8 +78,8 @@ AH_TOP([
 
 AC_CHECK_FUNCS([closefrom])
 AC_CHECK_DECL([F_CLOSEM],
-              AC_DEFINE([HAVE_FCNTL_CLOSEM], [1],
-	                [Use F_CLOSEM fcntl for mu_close_fds]),
+	      AC_DEFINE([HAVE_FCNTL_CLOSEM], [1],
+			[Use F_CLOSEM fcntl for mu_close_fds]),
 	      [],
 	      [#include <limits.h>
 	       #include <fcntl.h>
@@ -90,7 +90,7 @@ AC_CHECK_FUNCS([proc_pidinfo])
 
 if test -d "/proc/self/fd" ; then
   AC_DEFINE([HAVE_PROC_SELF_FD], [1], [Define if you have /proc/self/fd])
-fi  
+fi
 
 
 # Grecs subsystem
@@ -105,8 +105,8 @@ AM_GNU_GETTEXT_VERSION([0.19])
 
 AC_SUBST(INCLUDE_PATH_ARGS,['$(pkgdatadir)/include:$(pkgdatadir)/$(VERSION)/include'])
 AC_ARG_WITH([include-path],
-            [AS_HELP_STRING([--with-include-path=PATH],[set direvent runtime include path])],
-            [INCLUDE_PATH_ARGS=$withval])
+	    [AS_HELP_STRING([--with-include-path=PATH],[set direvent runtime include path])],
+	    [INCLUDE_PATH_ARGS=$withval])
 INCLUDE_PATH_ARGS=$(echo "$INCLUDE_PATH_ARGS" | sed 's/:/\",\"/g;s/^/\"/;s/$/\"/')
 
 # Initialize the test suite.
@@ -125,6 +125,6 @@ iface=$iface
 ])
 
 AC_CONFIG_FILES([Makefile
-                 src/Makefile
+		 src/Makefile
 		 doc/Makefile])
 AC_OUTPUT

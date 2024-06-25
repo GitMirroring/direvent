@@ -1,6 +1,6 @@
 #! /bin/sh
 # This file is part of GNU direvent -*- autoconf -*-
-# Copyright (C) 2012-2022 Sergey Poznyakoff
+# Copyright (C) 2012-2024 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,8 +58,8 @@ options:
   -h         display this help
   -p         get PO files and exit
 EOF
-           exit 0
-           ;;
+	   exit 0
+	   ;;
 	*) exit 1
     esac
 done
@@ -69,9 +69,8 @@ set -e
 get_po
 if [ -n "$po_only" ]; then
     exit 0
-fi    
+fi
 
 test -d am || mkdir am
 git submodule update --init --recursive
 autoreconf -f -i -s
-    

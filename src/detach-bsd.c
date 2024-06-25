@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -23,7 +23,7 @@
    However, if rfork(2) is called without the RFFDG flag, then the descrip-
    tor table is shared, which will allow sharing of the kqueue between two
    processes.
-*/	
+*/
 
 #include "direvent.h"
 #include <unistd.h>
@@ -48,7 +48,7 @@ detach(void (*init)())
 	int ec;
 
 	init();
-	
+
 	sigemptyset(&sa.sa_mask);
 	sa.sa_handler = SIG_IGN;
 	sa.sa_flags = 0;
@@ -67,9 +67,9 @@ detach(void (*init)())
 
 	pid = setsid();
 	ec = errno;
-	
+
 	sigaction(SIGHUP, &oldsa, NULL);
-	
+
 	if (pid == -1) {
 		errno = ec;
 		return -1;
@@ -86,5 +86,3 @@ detach(void (*init)())
 
 	return 0;
 }
-	
-		

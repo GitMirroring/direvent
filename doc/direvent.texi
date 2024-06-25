@@ -35,7 +35,7 @@
 @end ifinfo
 
 @copying
-Copyright @copyright{} 2013--2022 Sergey Poznyakoff
+Copyright @copyright{} 2013--2024 Sergey Poznyakoff
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -141,7 +141,7 @@ and system-independent command-level interface.  As of version
 reacts when a file system event occurs in any of them.  Directories
 and events to monitor are specified in the configuration file.  When
 an event occurs, the program reacts by invoking an external command
-configured for that event.			      
+configured for that event.
 
 @cindex events
 @cindex file system events
@@ -311,7 +311,7 @@ watcher @{
     path /home/ftp/incoming;
     event create;
     command "/usr/bin/upload $file";
-@}    
+@}
 @end example
 
 @cindex handler execution environment
@@ -418,12 +418,12 @@ Run in @dfn{self-test mode}.  In this mode, @command{direvent} starts
 external command supplied as the argument to this option and continues
 running until the command exits.  If @var{command} terminates normally,
 @command{direvent} exits with the code returned by it.  If
-@var{command} terminates on signal, @command{direvent} exits with 
+@var{command} terminates on signal, @command{direvent} exits with
 code @samp{0} if this signal was @code{SIGHUP}, and with code @samp{2}
 otherwise.
 
 The @var{command} can include any command line options or arguments,
-provided that it is properly quoted.  It is invoked as 
+provided that it is properly quoted.  It is invoked as
 @command{/bin/sh -c @var{command}} in the environment of
 the parent @command{direvent} process.
 
@@ -439,7 +439,7 @@ defined (@pxref{variable expansion}) to the PID of the running
 watcher @{
     path /tmp;
     command "/bin/kill -HUP $self_test_pid";
-@}    
+@}
 @end example
 
 Then, the following command can be used to check whether
@@ -490,7 +490,7 @@ Display available command line options.
 @itemx --version
 Print program version.
 @end table
-      
+
 @node Configuration
 @chapter Configuration
 
@@ -510,7 +510,7 @@ Print program version.
   There are three classes of lexical tokens: keywords, values, and
 separators.  Blanks, tabs, newlines and comments, collectively called
 @dfn{white space} are ignored except as they serve to separate
-tokens.  Some white space is required to separate otherwise adjacent 
+tokens.  Some white space is required to separate otherwise adjacent
 keywords and values.
 
 @menu
@@ -648,7 +648,7 @@ Examples of keywords are: @samp{expression}, @samp{output-file}.
   A boolean value is one of the following: @samp{yes}, @samp{true},
 @samp{t} or @samp{1}, meaning @dfn{true}, and @samp{no},
 @samp{false}, @samp{nil}, @samp{0} meaning @dfn{false}.
-  
+
 @item unquoted string
 @cindex string, unquoted
   An unquoted string may contain letters, digits, and any of the
@@ -698,7 +698,7 @@ above, the backslash is ignored and a warning is issued.
 @item Here-document
 @cindex here-document
   A @dfn{here-document} is a special construct that allows to introduce
-strings of text containing embedded newlines.  
+strings of text containing embedded newlines.
 
   The @code{<<@var{word}} construct instructs the parser to read all
 the following lines up to the line containing only @var{word}, with
@@ -737,8 +737,8 @@ TEXT
   It is important that the terminating delimiter be the only token on
 its line.  The only exception to this rule is allowed if a
 here-document appears as the last element of a statement.  In this
-case a semicolon can be placed on the same line with its terminating 
-delimiter, as in: 
+case a semicolon can be placed on the same line with its terminating
+delimiter, as in:
 
 @smallexample
 help-text <<-EOT
@@ -775,7 +775,7 @@ option (wait);
 
 @cindex statement, block
 @cindex block statement
-  A @dfn{block statement} introduces a logical group of 
+  A @dfn{block statement} introduces a logical group of
 statements.  It consists of a keyword, followed by an optional value,
 and a sequence of statements enclosed in curly braces, as shown in
 the example below:
@@ -858,7 +858,7 @@ separated by space characters.  Each name corresponds to a bit in
 @anchor{sysev_code}
 @defvr {macro variable} sysev_code
 A system-dependent event code.  It is a bitwise OR of the event codes
-represented as a decimal number.  
+represented as a decimal number.
 @end defvr
 
 @anchor{sysev_name}
@@ -1274,7 +1274,7 @@ call.  If @samp{shell} option is set, the command is executed via the
 shell set in the @env{SHELL} environment variable.
 
 @xref{handler environment}, for a detailed discussion of how the
-command is executed. 
+command is executed.
 @end deffn
 
 @deffn {Config} user @var{string}
@@ -1356,7 +1356,7 @@ The maximum number of watches a user process can have is controlled by
 the @samp{fs.inotify.max_user_watches} system variable.  Normally it
 is set to 8192, which is quite enough for most purposes.  However, if
 you monitor a big number or directories and/or are using recursive
-watchers, you may need to increase this number.  In that case, use 
+watchers, you may need to increase this number.  In that case, use
 @command{sysctl} (@pxref{sysctl,,configure kernel parameters at
 runtime, sysctl(8), sysctl(8) man page}) to raise the limit, e.g.:
 
@@ -1706,6 +1706,3 @@ This is a general index of all issues discussed in this manual
 @end ifset
 
 @bye
-
-
-

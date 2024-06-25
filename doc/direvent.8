@@ -1,5 +1,5 @@
 .\" GNU direvent - directory content watcher daemon -*- nroff -*-
-.\" Copyright (C) 2012-2022 Sergey Poznyakoff
+.\" Copyright (C) 2012-2024 Sergey Poznyakoff
 .\"
 .\" GNU direvent is free software; you can redistribute it and/or modify it
 .\" under the terms of the GNU General Public License as published by the
@@ -13,7 +13,7 @@
 .\"
 .\" You should have received a copy of the GNU General Public License along
 .\" with direvent. If not, see <http://www.gnu.org/licenses/>.
-.TH DIREVENT 8 "December 29, 2021" "DIREVENT" "Direvent User Reference"
+.TH DIREVENT 8 "June 25, 2024" "DIREVENT" "Direvent User Reference"
 .SH NAME
 direvent \- directory event monitor
 .SH SYNOPSIS
@@ -52,7 +52,7 @@ monitors a set of directories on the file system and reacts when
 a file system event occurs in any of them.  Directories and events
 to monitor are specified in the configuration file.  When an event
 occurs the utility reacts by invoking an external command configured
-for that event.	
+for that event.
 .PP
 The following
 .B generic
@@ -105,7 +105,7 @@ as the command line argument (\fICONFIG\fR parameter in the \fBSYNOPSIS\fR
 section above).
 .SH OPTIONS
 .TP
-.BR \-d ", " \-\-debug 
+.BR \-d ", " \-\-debug
 Increase debug verbosity level.
 .TP
 \fB\-F\fR, \fB\-\-facility=\fIFACILITY\fR
@@ -126,7 +126,7 @@ and
 
 The option \fB\-F 0\fR directs logging to the standard error.
 .TP
-.BR \-f ", " \-\-foreground 
+.BR \-f ", " \-\-foreground
 Run in the foreground.
 .TP
 \fB\-I\fR, \fB\-\-include-directory=\fIDIR\fR
@@ -168,7 +168,7 @@ terminates on \fBSIGHUP\fR, \fBdirevent\fR exits with code 0.  If it
 terminates on another signal, \fBdirevent\fR exits with code 2.
 
 \fICOMMAND\fR can include any command line options or arguments,
-provided that it is properly quoted.  It is invoked as 
+provided that it is properly quoted.  It is invoked as
 .BI "/bin/sh -c " COMMAND
 in the environment of the parent \fBdirevent\fR process.
 
@@ -179,7 +179,7 @@ holds the PID of the \fICOMMAND\fR (see section
 in
 .BR direvent.conf (5)).
 .TP
-.BR \-t ", " \-\-lint 
+.BR \-t ", " \-\-lint
 Check configuration file for errors and exit.
 .TP
 \fB\-u\fR, \fB\-\-user=\fIUSER\fR
@@ -188,10 +188,10 @@ Run as this \fIUSER\fR.
 Informative options cause the program to display the requested piece
 of information and exit:
 .TP
-.BR \-h ", " \-\-help 
+.BR \-h ", " \-\-help
 Output a terse help summary and exit.
 .TP
-.BR \-H ", " \-\-config\-help 
+.BR \-H ", " \-\-config\-help
 Describe configuration file syntax.
 .TP
 .B \-\-usage
@@ -504,7 +504,7 @@ Sergey Poznyakoff
 .SH "BUG REPORTS"
 Report bugs to <bug-direvent@gnu.org.ua>.
 .SH COPYRIGHT
-Copyright \(co 2012\-2021 Sergey Poznyakoff
+Copyright \(co 2012\-2024 Sergey Poznyakoff
 .br
 .na
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -519,4 +519,3 @@ There is NO WARRANTY, to the extent permitted by law.
 .\" time-stamp-end: "\""
 .\" time-stamp-line-limit: 20
 .\" end:
-

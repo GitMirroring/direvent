@@ -1,5 +1,5 @@
 # This file is part of GNU direvent.
-# Copyright (C) 2020-2022 Sergey Poznyakoff
+# Copyright (C) 2020-2024 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,15 +29,15 @@ my $output_name;
 my @includes;
 
 GetOptions("h" => sub {
-                    pod2usage(-message => "$0: generate docs",
-                              -exitstatus => 0);
-           },
-           "help" => sub {
-                    pod2usage(-exitstatus => 0, -verbose => 2);
-           },
-           "usage" => sub {
-                    pod2usage(-exitstatus => 0, -verbose => 0);
-           },
+		    pod2usage(-message => "$0: generate docs",
+			      -exitstatus => 0);
+	   },
+	   "help" => sub {
+		    pod2usage(-exitstatus => 0, -verbose => 2);
+	   },
+	   "usage" => sub {
+		    pod2usage(-exitstatus => 0, -verbose => 0);
+	   },
 	   'source|s=s' => \$srcname,
 	   'directory|C=s' => \$dirname,
 	   'output|o=s' => \$output_name,
@@ -71,11 +71,11 @@ sub template_scan {
 	s{ \$ ((?:BASE)?FILE|SIZE) \( ([a-z_]+) \) }{
 	    eval { Gendocs->instance($2, $pkgname, $srcname) };
 	    if ($@) {
-	        if ($@ =~ m{Can't locate object method "new"}) {
-	            die "$file:$line: unknown format: $2\n";
-	        } else {
-	            die $@;
-	        }
+		if ($@ =~ m{Can't locate object method "new"}) {
+		    die "$file:$line: unknown format: $2\n";
+		} else {
+		    die $@;
+		}
 	    }
 	}gex;
     }
@@ -95,7 +95,7 @@ sub template_expand {
 	       basename(Gendocs->instance($2)->output);
 	   } else {
 	       Gendocs->instance($2)->size;
-           }
+	   }
 	}gex;
 	print OFH "$_\n";
     }
@@ -137,7 +137,7 @@ sub new {
     unless (exists($registry{$class})){
 	$registry{$class} = bless { pkgname => $pkgname, input => $name }, $class;
     }
-    return $registry{$class} 
+    return $registry{$class}
 }
 sub instance {
     my ($class, $fmt, @args) = @_;
@@ -160,8 +160,8 @@ sub runcom {
     }
 }
 
-sub mark { shift->{mark} = 1 }    
-sub has_mark { shift->{mark} }    
+sub mark { shift->{mark} = 1 }
+sub has_mark { shift->{mark} }
 sub remove {
     my ($self) = @_;
     if ($self->{output}) {
@@ -207,7 +207,7 @@ sub build {
 	my $output = File::Spec->catfile($dirname, $self->pkgname . '.info');
 	print "Generating info file: " . $self->input . " -> $output\n";
 	$self->runcom("$self->{makeinfo} -o $output " . $self->input);
-        $self->{output} = $output;
+	$self->{output} = $output;
     }
     return $self->{output};
 }
@@ -224,7 +224,7 @@ sub build {
 	my $output = "$input.gz";
 	print "Compressing info file: $input -> $output\n";
 	$self->runcom("gzip -f -9 -c $input > $output");
-        $self->{output} = $output;
+	$self->{output} = $output;
     }
     return $self->{output};
 }
@@ -239,8 +239,8 @@ sub build {
     unless ($self->{output}) {
 	my $output = File::Spec->catfile($dirname, $self->pkgname . '.txt');
 	print "Generating ascii file: " . $self->input . " -> $output\n";
-        $self->runcom("$self->{makeinfo} -o $output --no-split --no-headers " . $self->input);
-        $self->{output} = $output;
+	$self->runcom("$self->{makeinfo} -o $output --no-split --no-headers " . $self->input);
+	$self->{output} = $output;
     }
     return $self->{output};
 }
@@ -257,7 +257,7 @@ sub build {
 	my $output = "$input.gz";
 	print "Compressing ascii file: $input -> $output\n";
 	$self->runcom("gzip -f -9 -c $input > $output");
-        $self->{output} = $output;
+	$self->{output} = $output;
     }
     return $self->{output};
 }
@@ -273,7 +273,7 @@ sub build {
 	my $output = File::Spec->catfile($dirname, $self->pkgname . '.tar.gz');
 	print "Creating compressed sources: $output\n";
 	$self->runcom("tar czfh $output *.texinfo *.texi *.txi *.eps 2>/dev/null || /bin/true");
-        $self->{output} = $output;
+	$self->{output} = $output;
     }
     return $self->{output};
 }
@@ -316,7 +316,7 @@ sub build {
 	my $output = "$input.gz";
 	print "Compressing dvi file: $input -> $output\n";
 	$self->runcom("gzip -f -9 -c $input > $output");
-        $self->{output} = $output;
+	$self->{output} = $output;
     }
     return $self->{output};
 }
@@ -333,7 +333,7 @@ sub build {
 	my $cmd = "$self->{texi2dvi} -o $output --pdf $self->{input}";
 	print "Creating pdf: $cmd\n";
 	$self->runcom($cmd);
-        $self->{output} = $output;	
+	$self->{output} = $output;
     }
     return $self->{output};
 }
@@ -345,14 +345,14 @@ gendocs.pl - generate documentation in various formats
 =head1 SYNOPSIS
 
 B<gendocs.pl>
-[B<-C> I<DIR>]    
+[B<-C> I<DIR>]
 [B<-s> I<SOURCE>]
-[B<-o> I<OUTPUT-FILE>]    
+[B<-o> I<OUTPUT-FILE>]
 [B<-I> I<INCLUDE-DIR>]
 [B<--directory=>I<DIR>]
-[B<--include=>I<INCLUDE-DIR>]    
-[B<--output=>I<OUTPUT-FILE>]    
-[B<--source=>I<SOURCE>]    
+[B<--include=>I<INCLUDE-DIR>]
+[B<--output=>I<OUTPUT-FILE>]
+[B<--source=>I<SOURCE>]
 I<PACKAGE> I<TEMPLATE>
 
 B<gendocs.pl> B<-h> | B<--help> | B<--usage>
@@ -362,7 +362,7 @@ B<gendocs.pl> B<-h> | B<--help> | B<--usage>
 Generates documentation for the I<PACKAGE> in various formats.  I<TEMPLATE>
 is a template file for the index page.  When processing I<TEMPLATE> the
 following I<macros> inform B<gendocs.pl> about the desired documentation
-formats and are expanded on output:    
+formats and are expanded on output:
 
 =over 4
 
@@ -401,15 +401,15 @@ The following output formats are supported:
 =item B<info>
 
 Monolithic info file.
-    
+
 =item B<info_gz>
 
 Monolithic info file, compressed with B<gzip>
-    
+
 =item B<ascii>
 
 Monolithic ASCII file.
-    
+
 =item B<ascii_gz>
 
 Monolithic ASCII file, compressed with B<gzip>
@@ -417,18 +417,18 @@ Monolithic ASCII file, compressed with B<gzip>
 =item B<texinfo_gz>
 
 A tar archive with the Texinfo documentation sources, compressed with B<gzip>.
-    
+
 =item B<dvi>
 
-TeX B<dvi> file.    
+TeX B<dvi> file.
 
 =item B<dvi_gz>
 
 TeX B<dvi> file, compressed with B<gzip>
-    
+
 =item B<pdf>
 
-A B<PDF> file.    
+A B<PDF> file.
 
 =back
 
@@ -439,18 +439,18 @@ A B<PDF> file.
 =item B<-C>, B<--directory=>I<DIR>
 
 Create all output files in the directory I<DIR>.
-    
+
 =item B<-s>, B<--source=>I<SOURCE>
 
 Name of the main Texinfo source file.  By default F<I<PACKAGE>.texi> is
-used.    
-    
+used.
+
 =item B<-o>, B<--output=>I<OUTPUT-FILE>
 
 Name of the output index file.  By default it is constructed by removing
 the last filename suffix from I<TEMPLATE>.  E.g. F<index.texi.in> produces
-F<index.texi>.    
-    
+F<index.texi>.
+
 =item B<-I>, B<--include=>I<INCLUDE-DIR>
 
 Name of the directory with Texinfo include files.  This option is not
@@ -471,12 +471,12 @@ Name and initial options of the B<makeinfo> program.
 =item B<TEXI2DVI>
 
 Name and initial options of the B<texi2dvi> program.  The default is
-F<texi2dvi --build=tidy -t @finalout>.    
+F<texi2dvi --build=tidy -t @finalout>.
 
 =item B<TEXINPUTS>
 
 Used by F<texi2dvi>.  Colon-separated list of Texinfo input directories.
 
-=back    
+=back
 
 =cut

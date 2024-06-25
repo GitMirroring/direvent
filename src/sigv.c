@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -20,7 +20,7 @@ int
 sigv_set_action(int sigc, int *sigv, struct sigaction *sa)
 {
 	int i;
-	
+
 	for (i = 0; i < sigc; i++) {
 		if (sigaction(sigv[i], &sa[i], NULL))
 			return i+1;
@@ -32,27 +32,27 @@ int
 sigv_restore_tab(int sigc, struct sigtab *sigtab, struct sigaction *sa)
 {
 	int i;
-	
+
 	for (i = 0; i < sigc; i++) {
 		if (sigaction(sigtab[i].signo, &sa[i], NULL))
 			return i+1;
 	}
 	return 0;
 }
-	
+
 int
 sigv_set_all(void (*handler)(int), int sigc, int *sigv,
 	     struct sigaction *retsa)
 {
 	int i;
 	struct sigaction sa;
-	
+
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
-	
+
 	for (i = 0; i < sigc; i++) {
 		sa.sa_handler = handler;
-		
+
 		if (sigaction(sigv[i], &sa, retsa ? &retsa[i] : NULL)) {
 			if (retsa) {
 				int ec = errno;
@@ -70,13 +70,13 @@ sigv_set_tab(int sigc, struct sigtab *sigtab, struct sigaction *retsa)
 {
 	int i;
 	struct sigaction sa;
-	
+
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
-	
+
 	for (i = 0; i < sigc; i++) {
 		sa.sa_handler = sigtab[i].sigfun;
-		
+
 		if (sigaction(sigtab[i].signo, &sa,
 			      retsa ? &retsa[i] : NULL)) {
 			if (retsa) {

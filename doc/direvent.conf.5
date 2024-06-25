@@ -1,5 +1,5 @@
 .\" GNU direvent - directory content watcher daemon -*- nroff -*-
-.\" Copyright (C) 2012-2022 Sergey Poznyakoff
+.\" Copyright (C) 2012-2024 Sergey Poznyakoff
 .\"
 .\" GNU direvent is free software; you can redistribute it and/or modify it
 .\" under the terms of the GNU General Public License as published by the
@@ -13,7 +13,7 @@
 .\"
 .\" You should have received a copy of the GNU General Public License along
 .\" with direvent. If not, see <http://www.gnu.org/licenses/>.
-.TH DIREVENT.CONF 5 "December 29, 2021" "DIREVENT" "Direvent User Reference"
+.TH DIREVENT.CONF 5 "June 25, 2024" "DIREVENT" "Direvent User Reference"
 .SH NAME
 direvent.conf \- configuration file for
 .BR direvent (8).
@@ -23,7 +23,7 @@ The configuration file consists of statements and comments.
 There are three classes of lexical tokens: keywords, values, and
 separators. Blanks, tabs, newlines and comments, collectively called
 \fIwhite space\fR are ignored except as they serve to separate
-tokens. Some white space is required to separate otherwise adjacent 
+tokens. Some white space is required to separate otherwise adjacent
 keywords and values.
 .SH COMMENTS
 Comments may appear anywhere where white space may appear in the
@@ -150,7 +150,7 @@ with a single character according to the following rules:
 	Sequence	Expansion	ASCII
 	\fB\\\\\fR	\fB\\\fR	134
 	\fB\\"\fR	\fB"\fR	042
-	\fB\\a\fR	audible bell	007	
+	\fB\\a\fR	audible bell	007
 	\fB\\b\fR	backspace	010
 	\fB\\f\fR	form-feed	014
 	\fB\\n\fR	new line	012
@@ -175,14 +175,14 @@ above, the backslash is ignored and a warning is issued.
 .TP
 .I Here-document
 A \fIhere-document\fR is a special construct that allows to introduce
-strings of text containing embedded newlines.  
+strings of text containing embedded newlines.
 
 The
 .BI "<<" "word"
 construct instructs the parser to read all the following lines up to
 the line containing only \fIword\fR, with possible trailing blanks.
 Any lines thus read are concatenated together into a single string.
-For example: 
+For example:
 .sp
 .nf
 .in +4
@@ -216,8 +216,8 @@ TEXT
 It is important that the terminating delimiter be the only token on
 its line.  The only exception to this rule is allowed if a
 here-document appears as the last element of a statement.  In this
-case a semicolon can be placed on the same line with its terminating 
-delimiter, as in: 
+case a semicolon can be placed on the same line with its terminating
+delimiter, as in:
 .sp
 .nf
 .in +5
@@ -255,7 +255,7 @@ option (wait);
 .in
 .fi
 .SS "Block Statement"
-A block statement introduces a logical group of 
+A block statement introduces a logical group of
 statements.  It consists of a keyword, followed by an optional value,
 called a \fBtag\fR, and a sequence of statements enclosed in curly
 braces, as shown in the example below:
@@ -299,12 +299,12 @@ assigned to the variable.  The value of \fIVARIABLE\fR is then substituted.
 If \fIVARIABLE\fR is null or unset, the expansion of \fIWORD\fR (or a
 message to that effect if \fIWORD\fR is not present) is output to the
 current logging channel.  Otherwise, the value of \fIVARIABLE\fR is
-substituted. 
+substituted.
 .TP
 \fB${\fIVARIABLE\fB:+\fIWORD\fB}\fR
 .IR "Use Alternate Value" .
 If \fIVARIABLE\fR is null or unset, nothing is substituted, otherwise
-the expansion of \fIWORD\fR is substituted. 
+the expansion of \fIWORD\fR is substituted.
 .PP
 Two kinds of variables take part in variable expansion: environment
 variables and \fImacro variables\fR.  The latter are special
@@ -333,13 +333,13 @@ is started without this option, this variable is not defined.
 .TP
 .B sysev_code
 System-dependent event code.  It is a bitwise \fBOR\fR of the event codes
-represented as a decimal number.  
+represented as a decimal number.
 .TP
 .B sysev_name
 System-dependent event name.  If several events are reported, the
 value of this variable is a list of event names separated by space
 characters.  Each name corresponds to a bit in \fBsysev_code\fR.  See
-the section  
+the section
 .B SYSTEM DEPENDENCIES
 in
 .BR direvent (8),
@@ -542,7 +542,7 @@ Use basic regular expressions.
 .B i
 Enable case-insensitive matching.
 
-A pattern or regular expression prefixed with \fB!\fR matches 
+A pattern or regular expression prefixed with \fB!\fR matches
 file names that don't match the pattern without \fB!\fR.
 .RE
 .TP
@@ -636,4 +636,3 @@ There is NO WARRANTY, to the extent permitted by law.
 .\" time-stamp-end: "\""
 .\" time-stamp-line-limit: 20
 .\" end:
-

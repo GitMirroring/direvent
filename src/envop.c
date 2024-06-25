@@ -1,5 +1,5 @@
 /* Environment modification functions for GNU direvent.
-   Copyright (C) 2019-2022 Sergey Poznyakoff
+   Copyright (C) 2019-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ environ_create (char **def)
       static char *nullenv[] = { NULL };
       def = nullenv;
     }
-  
+
   for (i = 0; def[i]; i++)
     ;
   env->env_count = 0;
@@ -50,7 +50,7 @@ environ_create (char **def)
       free (env);
       return NULL;
     }
-  
+
   for (i = 0; def[i]; i++)
     {
       if (!(env->env_base[i] = strdup (def[i])))
@@ -78,12 +78,12 @@ static ssize_t
 getenvind (environ_t *env, char const *name, char **pval)
 {
   size_t i;
-  
+
   for (i = 0; i < env->env_count; i++)
     {
       char const *p;
       char *q;
-      
+
       for (p = name, q = env->env_base[i]; *p == *q; p++, q++)
 	if (*p == '=')
 	  break;
@@ -156,7 +156,7 @@ environ_get (environ_t *env, char const *name)
     return NULL;
   return val;
 }
-  
+
 int
 environ_add (environ_t *env, char const *def)
 {
@@ -170,7 +170,7 @@ environ_add (environ_t *env, char const *def)
     }
   return 0;
 }
-  
+
 int
 environ_set (environ_t *env, char const *name, char const *value)
 {
@@ -220,7 +220,7 @@ environ_set (environ_t *env, char const *name, char const *value)
       wordsplit_free (&ws);
       return 0;
     }
-  
+
   len = strlen (name) + strlen (ws.ws_wordv[0]) + 2;
   def = malloc (len);
   if (!def)
@@ -239,7 +239,7 @@ environ_set (environ_t *env, char const *name, char const *value)
     }
   return 0;
 }
-  
+
 int
 environ_unset (environ_t *env, char const *name, char const *refval)
 {
@@ -294,7 +294,7 @@ static void
 envop_entry_insert (struct envop_entry **phead, struct envop_entry *op)
 {
   struct envop_entry *head = *phead;
-  
+
   if (!head)
     {
       *phead = op;
@@ -312,7 +312,7 @@ envop_entry_insert (struct envop_entry **phead, struct envop_entry *op)
 	  *phead = op;
 	}
       break;
-  
+
     case envop_keep:
     {
       struct envop_entry *prev = NULL;
@@ -332,7 +332,7 @@ envop_entry_insert (struct envop_entry **phead, struct envop_entry *op)
     default:
       while (head && head->next)
 	head = head->next;
-      
+
       head->next = op;
     }
 }
@@ -364,7 +364,7 @@ envop_entry_add (struct envop_entry **head,
     {
     case envop_clear:
       break;
-      
+
     case envop_set:
       if (name && !(*name == ':' || valid_envar_name (name)))
 	{
@@ -376,7 +376,7 @@ envop_entry_add (struct envop_entry **head,
     case envop_keep:
     case envop_unset:
       break;
-      
+
     default:
       errno = EINVAL;
       return -1;
@@ -438,7 +438,7 @@ int
 envop_exec (struct envop_entry *op, environ_t *env)
 {
   size_t i;
-  
+
   if (op && op->code == envop_clear)
     {
       op = op->next;
@@ -483,7 +483,7 @@ envop_exec (struct envop_entry *op, environ_t *env)
 	  if (environ_set (env, op->name, op->value))
 	    return -1;
 	  break;
-		   
+
 	case envop_unset:
 	  if (op->value)
 	    environ_unset (env, op->name, op->value);
@@ -493,7 +493,7 @@ envop_exec (struct envop_entry *op, environ_t *env)
 
 	case envop_keep:
 	  break;
-	  
+
 	default:
 	  abort ();
 	}
@@ -526,7 +526,7 @@ envop_cmp (struct envop_entry *a, struct envop_entry *b)
 	{
 	case envop_clear:
 	  break;
-	  
+
 	case envop_keep:
 	case envop_set:
 	case envop_unset:

@@ -6,4 +6,3 @@
 @item @uref{../$FILE(pdf),$BASEFILE(pdf)} @tab PDF file ($SIZE(pdf) characters gzipped)
 @item @uref{../$FILE(texinfo_gz),$BASEFILE(texinfo_gz)} @tab Texinfo source ($SIZE(texinfo_gz) characters gzipped tar file)
 @end multitable
-

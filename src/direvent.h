@@ -43,7 +43,7 @@
 #define HF_WAIT    0x01   /* Wait for termination */
 #define HF_STDOUT  0x02   /* Capture stdout */
 #define HF_STDERR  0x04   /* Capture stderr */
-#define HF_SHELL   0x08   /* Call program via /bin/sh -c */ 
+#define HF_SHELL   0x08   /* Call program via /bin/sh -c */
 
 #ifndef DEFAULT_TIMEOUT
 # define DEFAULT_TIMEOUT 5
@@ -114,7 +114,7 @@ struct watchpoint {
 	size_t refcnt;
 	int wd;                              /* Watch descriptor. */
 	struct watchpoint *parent;           /* Points to the parent watcher.
-					        NULL for top-level watchers. */
+						NULL for top-level watchers. */
 	char *dirname;                       /* Pathname being watched. */
 	int isdir;                           /* Is it directory. */
 	handler_list_t handler_list;         /* List of handlers. */
@@ -131,7 +131,7 @@ struct watchpoint {
 	int file_changed;
 	time_t file_ctime;
 #else
-	struct grecs_symtab *files_changed;	
+	struct grecs_symtab *files_changed;
 #endif
 };
 
@@ -154,12 +154,6 @@ struct handler *prog_handler_alloc(event_mask ev_mask, filpatlist_t fpat,
 				   struct prog_handler *p);
 void prog_handler_free(struct prog_handler *);
 
-struct synthetic_event {
-	event_mask mask;
-	char *dirname;
-	char *filename;
-};
-
 void synthetic_event_enqueue(event_mask, char const *, char const *);
 void synthetic_event_update(event_mask mask, const char *dirname,
 			    const char *filename);
@@ -293,7 +287,7 @@ struct handler *handler_itr_current(handler_iterator_t itr);
 	for (h = handler_itr_first(d, &(i));	\
 	     h;						\
 	     h = handler_itr_next(&(i)))
-	
+
 
 handler_list_t handler_list_create(void);
 handler_list_t handler_list_copy(handler_list_t);

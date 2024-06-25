@@ -1,5 +1,5 @@
 # This file is part of GNU direvent testsuite. -*- Autotest -*-
-# Copyright (C) 2013-2022 Sergey Poznyakoff
+# Copyright (C) 2013-2024 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ watcher {
 	file "foo";
 	event (create);
 	option (stdout,stderr);
-	command "$TESTDIR/envdump -s -i DIREVENT_FILE=:DIREVENT_GENEV_ -a -f $outfile -k\$self_test_pid";	
+	command "$TESTDIR/envdump -s -i DIREVENT_FILE=:DIREVENT_GENEV_ -a -f $outfile -k\$self_test_pid";
 }
 ],
 [sleep 1
@@ -69,4 +69,3 @@ direvent: [[NOTICE]] installing CREATE sentinel for CWD/dir/sub
 ])
 
 AT_CLEANUP
-

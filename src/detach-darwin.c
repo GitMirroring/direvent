@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -22,18 +22,18 @@
    three descriptors inherited from the parent process.  If the initialization
    succeeds, the child sends a SIGUSR1 to the parent, closes the first three
    descriptors and disconnects itself from the controlling terminal.
-   Otherwise, it exits with a non-zero code. 
+   Otherwise, it exits with a non-zero code.
 
    The parent waits until a signal is delivered.  It exits successfully if
    delivered a SIGUSR1, and reports an error otherwise. */
-   
+
 #include "direvent.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <errno.h>
 #include <stdlib.h>
-	
+
 #ifdef HAVE_PATHS_H
 # include <paths.h>
 #endif
@@ -53,14 +53,14 @@ catch_signal(int sig)
 void
 waitchild()
 {
-	while (lastsig == 0) 
+	while (lastsig == 0)
 		pause();
-	
+
 	if (lastsig == SIGUSR1)
 		_exit(0);
 	diag(LOG_CRIT, "failed to install watchers");
 	exit(1);
-}	
+}
 
 int
 detach(void (*init)())
@@ -89,18 +89,18 @@ detach(void (*init)())
 
 	init();
 	kill(getppid(), SIGUSR1);
-	
+
 	pid = setsid();
 	ec = errno;
-	
+
 	sigv_restore_tab(NITEMS(sigtab), sigtab, oldsa);
-	
+
 	if (pid == -1) {
 		errno = ec;
 		return -1;
 	}
 
-        chdir("/");
+	chdir("/");
 
 	close(0);
 	close(1);
@@ -111,5 +111,3 @@ detach(void (*init)())
 
 	return 0;
 }
-	
-		

@@ -1,5 +1,5 @@
 GNU direvent README.
-Copyright (C) 2012-2022 Sergey Poznyakoff
+Copyright (C) 2012-2024 Sergey Poznyakoff
 See the end of file for copying conditions.
 
 * Overview
@@ -12,7 +12,7 @@ invoking an external command configured for that kind of change.
 The program aims to provide a uniform and system-independent
 command-level interface for file system events.  This version
 is known to work on GNU/Linux (kernels starting from
-v. 2.6.13) and BSD systems (FreeBSD, NetBSD, OpenBSD, Darwin). 
+v. 2.6.13) and BSD systems (FreeBSD, NetBSD, OpenBSD, Darwin).
 
 * Building and Configuring
 
@@ -21,14 +21,14 @@ The usual incantation applies:
    ./configure [OPTIONS]
    make
    make install
-  
+
 See the file INSTALL for the description of ./configure and its
 generic options.
 
 Following are the package-specific options:
 
  --with-include-path=PATH
- 
+
    Define standard include path.  This is a list of directories where
    files given in the #include and #include_once configuration
    statements will be searched.  PATH is a list of directories
@@ -37,7 +37,7 @@ Following are the package-specific options:
    at compile time.  The default PATH is
 
       $(pkgdatadir)/$(VERSION):$(pkgdatadir)/include
-  
+
    See the documentation, section 5.1.2 "Pragmatic Comments", for a
    detailed description of #include and #include_path statements and
    the meaning of the include search path.
@@ -60,7 +60,7 @@ at http://direvent.man.gnu.org.ua.
 
 * Copyright information:
 
-Copyright (C) 2012-2016 Sergey Poznyakoff
+Copyright (C) 2012-2024 Sergey Poznyakoff
 
    Permission is granted to anyone to make or distribute verbatim copies
    of this document as received, in any medium, provided that the
@@ -74,6 +74,6 @@ Copyright (C) 2012-2016 Sergey Poznyakoff
 
 Local Variables:
 mode: outline
-paragraph-separate: "[ 	]*$"
+paragraph-separate: "[	]*$"
 version-control: never
 End:

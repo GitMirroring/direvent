@@ -1,5 +1,5 @@
 # This file is part of GNU direvent -*- autoconf -*-
-# Copyright (C) 2012-2022 Sergey Poznyakoff
+# Copyright (C) 2012-2024 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,4 +58,3 @@ noinst_HEADERS=gettext.h
 SUFFIXES=.opt .c .h
 .opt.h:
 	$(AM_V_GEN)m4 -s $(top_srcdir)/@GRECS_SUBDIR@/build-aux/getopt.m4 $< > $@
-

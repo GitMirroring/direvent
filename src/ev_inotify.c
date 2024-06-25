@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -22,14 +22,14 @@
 /* Event codes */
 struct transtab sysev_transtab[] = {
 	{ "ACCESS",        IN_ACCESS         },
-	{ "ATTRIB",        IN_ATTRIB         },       
-	{ "CLOSE_WRITE",   IN_CLOSE_WRITE    },  
+	{ "ATTRIB",        IN_ATTRIB         },
+	{ "CLOSE_WRITE",   IN_CLOSE_WRITE    },
 	{ "CLOSE_NOWRITE", IN_CLOSE_NOWRITE  },
-	{ "CREATE",        IN_CREATE         },       
-	{ "DELETE",        IN_DELETE         },      
+	{ "CREATE",        IN_CREATE         },
+	{ "DELETE",        IN_DELETE         },
 	{ "MODIFY",        IN_MODIFY         },
-	{ "MOVED_FROM",    IN_MOVED_FROM     },    
-	{ "MOVED_TO",      IN_MOVED_TO       },      
+	{ "MOVED_FROM",    IN_MOVED_FROM     },
+	{ "MOVED_TO",      IN_MOVED_TO       },
 	{ "OPEN",          IN_OPEN           },
 	{ 0 }
 };
@@ -201,7 +201,7 @@ process_event(struct inotify_event *ep)
 	struct watchpoint *wpt;
 	char const *dirname, *filename;
 	event_mask event;
-	
+
 	wpt = wpget(ep->wd);
 	if (!wpt) {
 		if (!(ep->mask & IN_IGNORED))
@@ -209,13 +209,13 @@ process_event(struct inotify_event *ep)
 			     ep->wd, ep->name);
 		return;
 	}
-	
+
 	if (ep->mask & IN_IGNORED) {
 		diag(LOG_NOTICE, _("%s deleted"), wpt->dirname);
 		watchpoint_suspend(wpt);
 		return;
 	}
-	
+
 	if (ep->mask & IN_Q_OVERFLOW) {
 		diag(LOG_NOTICE, "%s", _("event queue overflow"));
 		return;
@@ -235,7 +235,7 @@ process_event(struct inotify_event *ep)
 		return;
 	}
 
-	if (ep->mask & IN_CREATE) {		
+	if (ep->mask & IN_CREATE) {
 		debug(1, (_("%s/%s created"), wpt->dirname, ep->name));
 		if (watchpoint_recent_lookup(wpt, ep->name)) {
 			diag(LOG_NOTICE,
@@ -284,12 +284,12 @@ process_event(struct inotify_event *ep)
 	synthetic_event_update(event, dirname, filename);
 
 	watchpoint_run_handlers(wpt, event, dirname, filename);
-	
+
 	if (ep->mask & (IN_DELETE|IN_MOVED_FROM)) {
 		debug(1, (_("%s/%s deleted"), wpt->dirname, ep->name));
 		remove_watcher(wpt->dirname, ep->name);
 	}
-}	
+}
 
 int
 sysev_select()
@@ -307,11 +307,11 @@ sysev_select()
 			diag(LOG_NOTICE, _("got signal %d"), signo);
 			return 1;
 		}
-		
+
 		diag(LOG_NOTICE, _("read failed: %s"), strerror(errno));
 		return 1;
 	}
-		
+
 	ep = (struct inotify_event *) buffer;
 	while (rdbytes) {
 		if (ep->wd >= 0)
@@ -320,6 +320,6 @@ sysev_select()
 		ep = (struct inotify_event *) ((char*) ep + size);
 		rdbytes -= size;
 	}
-	
+
 	return 0;
 }

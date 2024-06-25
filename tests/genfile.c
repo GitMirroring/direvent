@@ -83,7 +83,7 @@ set_size(char const *arg)
 			fprintf(stderr, "invalid size suffix: %s\n", arg);
 			exit(2);
 		}
-				
+
 #               define XB()						\
 		if (SIZE_T_MAX / size < 1024) {				\
 			fprintf(stderr,					\
@@ -92,7 +92,7 @@ set_size(char const *arg)
 			exit(2);					\
 		}							\
 		size <<= 10;
-		
+
 		switch (*p) {
 		case 'g':
 		case 'G':
@@ -106,14 +106,14 @@ set_size(char const *arg)
 		case 'K':
 			XB();
 			break;
-			
+
 		default:
 			fprintf(stderr, "invalid size suffix: %s\n", arg);
 			exit(2);
 		}
 	}
 }
-	
+
 static void
 set_timeout(char const *arg)
 {
@@ -169,13 +169,13 @@ main(int argc, char **argv)
 	FILE *fp;
 	size_t i, n;
 	struct timespec end, stop, diff;
-	
+
 	while ((c = getopt(argc, argv, "f:hst")) != EOF) {
 		switch (c) {
 		case 'f':
 			filename = optarg;
 			break;
-			
+
 		case 'h':
 			usage(stdout);
 			return 0;
@@ -184,14 +184,14 @@ main(int argc, char **argv)
 		case 't':
 			optind--;
 			goto endopt;
-			
+
 		default:
 			usage(stderr);
 			return 2;
 		}
 	}
 endopt:
-	
+
 	if (filename) {
 		if ((fp = fopen(filename, "w")) == NULL) {
 			perror(filename);
@@ -232,9 +232,9 @@ endopt:
 			} else {
 				fprintf(stderr,	"%s: extra argument\n",	arg);
 				return 2;
-			}				
+			}
 		}
-	
+
 		clock_gettime(CLOCK_MONOTONIC, &end);
 		end = ts_add(&end, &ts);
 		for (i = 0; i < size; i++, n++) {

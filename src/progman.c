@@ -59,10 +59,10 @@ struct process {
 	time_t start;           /* Time when the process started */
 	struct prog_handler *hp;/* Originating handler */
 	union {
-                /* Pointers to logger processes, if
+		/* Pointers to logger processes, if
 		   type == PROC_HANDLER (NULL if no logger) */
 		struct process *logger[2];
-                /* Master process, if type == PROC_LOGGER */
+		/* Master process, if type == PROC_LOGGER */
 		struct process *master;
 	} v;
 };
@@ -155,7 +155,7 @@ print_status(pid_t pid, int status, int type, sigset_t *mask)
 	} else if (WIFSIGNALED(status)) {
 		int prio;
 		char *core_status;
-		
+
 		if (sigismember(mask, WTERMSIG(status)))
 			prio = LOG_DEBUG;
 		else
@@ -183,7 +183,7 @@ process_cleanup(int expect_term)
 {
 	pid_t pid;
 	int status;
-	
+
 	while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
 		sigset_t set;
 		sigemptyset(&set);
@@ -191,7 +191,7 @@ process_cleanup(int expect_term)
 		if (pid == self_test_pid) {
 			sigaddset(&set, SIGHUP);
 			print_status(pid, status, PROC_SELFTEST, &set);
-			
+
 			if (WIFEXITED(status))
 				exit_code = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status)) {
@@ -263,7 +263,7 @@ switchpriv(struct prog_handler *hp)
 {
 	if (hp->uid == 0 || hp->uid == getuid())
 		return 0;
-	
+
 	if (setgroups(hp->gidc, hp->gidv) < 0) {
 		diag(LOG_CRIT, "setgroups: %s",
 		     strerror(errno));
@@ -284,7 +284,7 @@ switchpriv(struct prog_handler *hp)
 		return 1;
 	}
 	return 0;
-}		
+}
 
 /* Operations with handlers and loggers */
 
@@ -302,7 +302,7 @@ open_logger(const char *tag, int prio, struct process **return_proc)
 	char buf[512];
 	pid_t pid;
 	int i;
-	
+
 	if (pipe(p)) {
 		diag(LOG_ERR,
 		     _("cannot start logger for %s, pipe failed: %s"),
@@ -321,7 +321,7 @@ open_logger(const char *tag, int prio, struct process **return_proc)
 		fp = fdopen(p[0], "r");
 		if (fp == NULL)
 			_exit(1);
-		if (facility > 0) 
+		if (facility > 0)
 			openlog(tag, LOG_PID, facility);
 
 		while (fgets(buf, sizeof(buf), fp)) {
@@ -331,7 +331,7 @@ open_logger(const char *tag, int prio, struct process **return_proc)
 			diag(prio, "%s", buf);
 		}
 		_exit(0);
-      
+
 	case -1:
 		diag(LOG_CRIT,
 		     _("cannot run logger `%s': fork failed: %s"),
@@ -342,7 +342,7 @@ open_logger(const char *tag, int prio, struct process **return_proc)
 		debug(3, (_("logger for %s started, pid=%lu"),
 			  tag, (unsigned long) pid));
 		close(p[0]);
-		*return_proc = register_process(PROC_LOGGER, pid, 
+		*return_proc = register_process(PROC_LOGGER, pid,
 						time(NULL), 0, NULL);
 		return p[1];
 	}
@@ -391,7 +391,7 @@ parse_legacy_env(char **argv, envop_t **envop)
 					    defenv[j].macro_name, NULL))
 				return -1;
 		}
-		
+
 		if (argv[0][1] == 0) {
 			for (j = 0; j < DEFENV_COUNT; j++) {
 				if (envop_entry_add(envop, envop_keep,
@@ -408,12 +408,12 @@ parse_legacy_env(char **argv, envop_t **envop)
 		size_t msize = 0;
 		enum envop_code code;
 		int rc;
-		
+
 		if (name[0] == '-') {
 			/* Unset directive */
 			name++;
 			len--;
-			
+
 			if (name[len]) {
 				name[len] = 0;
 				value = name + len + 1;
@@ -425,7 +425,7 @@ parse_legacy_env(char **argv, envop_t **envop)
 			size_t vlen;
 
 			if (len == 0)
-                                /* Skip erroneous entry */
+				/* Skip erroneous entry */
 				continue;
 			value = name + len + 1;
 			vlen = strlen(value);
@@ -529,9 +529,9 @@ runcmd(struct prog_handler *hp, event_mask *event, const char *file)
 	/*
 	 * Fill in the default environment and macro variable values.
 	 */
-	
+
 	defenv[ENV_FILE].value = (char*) file;
-	
+
 	snprintf(buf, sizeof buf, "%d", event->sys_mask);
 	defenv[ENV_SYSEV_CODE].value = estrdup(buf);
 
@@ -569,9 +569,9 @@ runcmd(struct prog_handler *hp, event_mask *event, const char *file)
 		diag(LOG_CRIT, "envop_exec failed: %s", strerror(errno));
 		_exit(127);
 	}
-	
+
 	/* Unset macro names.  See the NOTE above. */
- 	for (i = 0; i < DEFENV_COUNT; i++)
+	for (i = 0; i < DEFENV_COUNT; i++)
 		environ_unset(env, defenv[i].macro_name, NULL);
 
 	debug_environ(4, env, "modified environment");
@@ -592,7 +592,7 @@ runcmd(struct prog_handler *hp, event_mask *event, const char *file)
 		     wordsplit_strerror(&ws));
 		_exit(127);
 	}
-	
+
 	if (hp->flags & HF_SHELL) {
 		xargv[0] = (char*) environ_get(env, "SHELL");
 		if (!xargv[0])
@@ -642,7 +642,7 @@ prog_handler_run(struct watchpoint *wp, event_mask *event,
 		free(gen);
 		return 0;
 	}
-	
+
 	debug(1, (_("starting %s, dir=%s, file=%s"),
 		  hp->command, dirname, file));
 	if (hp->flags & HF_STDERR)
@@ -651,7 +651,7 @@ prog_handler_run(struct watchpoint *wp, event_mask *event,
 	if (hp->flags & HF_STDOUT)
 		logger_fd[LOGGER_OUT] = open_logger(hp->command, LOG_INFO,
 						    &logger_proc[LOGGER_OUT]);
-	
+
 	pid = fork();
 	if (pid == -1) {
 		diag(LOG_ERR, "fork: %s", strerror(errno));
@@ -663,14 +663,14 @@ prog_handler_run(struct watchpoint *wp, event_mask *event,
 			kill(logger_proc[LOGGER_ERR]->pid, SIGKILL);
 		return -1;
 	}
-	
-	if (pid == 0) {		
+
+	if (pid == 0) {
 		/* child */
 		int keepfd[3] = { 0, 0, 0 };
-		
+
 		if (switchpriv(hp))
 			_exit(127);
-		
+
 		if (chdir(dirname)) {
 			diag(LOG_CRIT, _("cannot change to %s: %s"),
 			     dirname, strerror(errno));
@@ -721,7 +721,7 @@ prog_handler_run(struct watchpoint *wp, event_mask *event,
 		logger_proc[LOGGER_ERR]->timeout = hp->timeout;
 	}
 	memcpy(p->v.logger, logger_proc, sizeof(p->v.logger));
-	
+
 	close(logger_fd[LOGGER_OUT]);
 	close(logger_fd[LOGGER_ERR]);
 
@@ -770,4 +770,3 @@ prog_handler_alloc(event_mask ev_mask, filpatlist_t fpat,
 	memset(p, 0, sizeof(*p));
 	return hp;
 }
-		

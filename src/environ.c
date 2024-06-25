@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2022 Sergey Poznyakoff
+   Copyright (C) 2012-2024 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -39,7 +39,7 @@ environ_setup(envop_t *envop, char **kve, int shell)
 
 	for (i = 0; kve[i]; i += 2)
 		environ_set(env, kve[i], kve[i+1]);
-		
+
 	for (i = 0; defenv[i].name; i++) {
 		environ_set(env, defenv[i].name, defenv[i].value);
 	}

@@ -1,5 +1,5 @@
 # This file is part of GNU direvent testsuite. -*- Autotest -*-
-# Copyright (C) 2021-2022 Sergey Poznyakoff
+# Copyright (C) 2021-2024 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ debug 10;
 watcher {
 	path $cwd/dir;
 	event create;
-        environ {
+	environ {
 		clear;
 		keep DIREVENT_FILE;
 	};
@@ -49,7 +49,7 @@ debug 10;
 watcher {
 	path $cwd/dir;
 	event create;
-        environ {
+	environ {
 		clear;
 		keep "DIREVENT_*" MYVAR;
 	};

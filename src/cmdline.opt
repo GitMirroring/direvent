@@ -1,15 +1,15 @@
 #define EX_USAGE 1
 
 OPTIONS_BEGIN("direvent",
-              [<GNU direvent monitors changes in directories>],
-              [<[CONFIG]>],
-              [<gnu>],
-              [<copyright_year=2012-2022>],
-              [<copyright_holder=Sergey Poznyakoff>])
+	      [<GNU direvent monitors changes in directories>],
+	      [<[CONFIG]>],
+	      [<gnu>],
+	      [<copyright_year=2012-2024>],
+	      [<copyright_holder=Sergey Poznyakoff>])
 
 OPTION(debug,d,,
        [<increase debug level>])
-BEGIN       
+BEGIN
 	opt_debug_level++;
 END
 
@@ -21,40 +21,40 @@ BEGIN
 	else
 		log_to_stderr = get_priority(optarg);
 END
-       
+
 OPTION(facility,F,NAME,
        [<set syslog facility>])
-BEGIN       
+BEGIN
 	opt_facility = get_facility(optarg);
 END
 
 OPTION(foreground,f,,
        [<remain in foreground>])
-BEGIN       
+BEGIN
 	opt_foreground++;
 END
 
 OPTION(include-directory,I,DIR,
        [<add include directory>])
 BEGIN
-        grecs_preproc_add_include_dir(optarg);
+	grecs_preproc_add_include_dir(optarg);
 END
-	 
+
 OPTION(self-test,T,PROG,
        [<self-test mode>])
 BEGIN
 	self_test_prog = optarg;
-END	
+END
 
 OPTION(pidfile,P,FILE,
        [<set PID file>])
-BEGIN       
+BEGIN
 	opt_pidfile = optarg;
-END	
+END
 
 OPTION(lint,t,,
        [<check configuration file and exit>])
-BEGIN       
+BEGIN
 	lint_only = 1;
 END
 
@@ -67,14 +67,14 @@ BEGIN
 		exit(1);
 	}
 END
-	      
+
 OPTION(config-help,H,,
        [<show configuration file summary>])
 BEGIN
 	config_help();
 	exit(0);
 END
-	   
+
 
 OPTIONS_END
 
@@ -92,7 +92,7 @@ help_hook(FILE *fp)
 	fprintf(fp,
 		_("The optional CONFIG argument supplies the name of the "
 		  "configuration file\n"
-	          "to use instead of %s.\n\n"), DEFAULT_CONFFILE); 
+		  "to use instead of %s.\n\n"), DEFAULT_CONFFILE);
 	/* TRANSLATORS: %s is one of: inotify, kqueue */
 	fprintf(fp, _("This direvent uses %s interface.\n\n"), INTERFACE);
 
@@ -110,4 +110,3 @@ parse_options(int argc, char *argv[], int *index)
 	proginfo.print_help_hook = help_hook;
 	GETOPT(argc, argv, *index)
 }
-  
