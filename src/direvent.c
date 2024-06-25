@@ -664,6 +664,7 @@ main(int argc, char **argv)
 	
 	/* Main loop */
 	while (!stop && sysev_select() == 0) {
+		synthetic_event_flush();
 		process_timeouts();
 		process_cleanup(0);
 		watchpoint_gc();

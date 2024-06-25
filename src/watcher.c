@@ -221,6 +221,21 @@ watchpoint_install(const char *path, int *pnew)
 }
 
 struct watchpoint *
+watchpoint_lookup(const char *path)
+{
+	struct watchpoint wpkey;
+	struct wpref key;
+	struct wpref *ent;
+
+	if (!nametab)
+		return NULL;
+	wpkey.dirname = (char*) path;
+	key.wpt = &wpkey;
+	ent = grecs_symtab_lookup_or_install(nametab, &key, NULL);
+	return ent ? ent->wpt : NULL;
+}
+
+struct watchpoint *
 watchpoint_install_ptr(struct watchpoint *wpt)
 {
 	struct wpref key;
@@ -251,22 +266,6 @@ watchpoint_gc(void)
 		grecs_list_free(watchpoint_gc_list);
 		watchpoint_gc_list = NULL;
 	}
-}
-
-struct watchpoint *
-watchpoint_lookup(const char *dirname)
-{
-	struct watchpoint wpkey;
-	struct wpref key;
-	struct wpref *ent;
-
-	if (!nametab)
-		return NULL;
-	
-	wpkey.dirname = (char*) dirname;
-	key.wpt = &wpkey;
-	ent = grecs_symtab_lookup_or_install(nametab, &key, NULL);
-	return ent ? ent->wpt : NULL;
 }
 
 static void
@@ -355,6 +354,7 @@ watchpoint_install_sentinel(struct watchpoint *wpt)
 	struct handler *hp;
 	event_mask ev_mask;
 	struct sentinel *sentinel;
+	int rc;
 	
 	filename = watchpoint_extract_filename(wpt, &dirname);
 	sent = watchpoint_install(dirname, NULL);
@@ -375,7 +375,23 @@ watchpoint_install_sentinel(struct watchpoint *wpt)
 	filpatlist_add_exact(&hp->fnames, filename);
 	handler_list_append(sent->handler_list, hp);
 	diag(LOG_NOTICE, _("installing CREATE sentinel for %s"), wpt->dirname);
-	return watchpoint_init(sent);
+	rc = watchpoint_init(sent);
+	if (rc == 0 && access(wpt->dirname, F_OK) == 0) {
+		/*
+		 * Possible race condition: if the file had been created
+		 * before the sentinel was installed, no create event is
+		 * reported, and thus the sentinel won't have a chance to
+		 * do its job.  To avoid this, synthesize the create event,
+		 * which will trigger the sentinel later in the main loop.
+		 * In case the create event is sent by the system, the
+		 * synthetic event will be removed by a call to
+		 * synthetic_event_update, so no spurious creates should
+		 * be reported.
+		 */
+		event_mask mask = { GENEV_CREATE, 0 };
+		synthetic_event_enqueue(mask, dirname, filename);
+	}
+	return rc;
 }
 
 static int watch_subdirs(struct watchpoint *parent, int notify);
@@ -687,4 +703,113 @@ watchpoint_extract_filename(struct watchpoint *dp, char const **dirname)
 	}
 	*dirname = dp->split_dirname;
 	return dp->split_filename;
+}
+
+/*
+ * Support for synthetic events.
+ */
+
+static grecs_list_ptr_t synth_event_list;
+
+static void
+synth_event_free(void *ptr)
+{
+	free(ptr);
+}
+
+/* Create and enqueue a new event. */
+void
+synthetic_event_enqueue(event_mask mask, char const *dirname,
+			char const *filename)
+{
+	size_t dirlen = strlen(dirname);
+	size_t fillen = strlen(filename);
+	struct synthetic_event *evt;
+
+	if (debug_level >= 1) {
+		char *sys, *gen;
+		if (ev_format(mask, &gen, &sys)) {
+			diag(LOG_ERR, "%s", _("out of memory"));
+			sys = gen = "?";
+		}
+		debugprt("synthesizing event: gen=%s, sys=%s, dirname=%s, filename=%s",
+			 gen, sys, dirname, filename);
+		free(sys);
+		free(gen);
+	}
+	evt = emalloc(sizeof(*evt) + dirlen + fillen + 2);
+	evt->mask = mask;
+	evt->dirname = (char*)(evt + 1);
+	strcpy(evt->dirname, dirname);
+	evt->filename = evt->dirname + dirlen + 1;
+	strcpy(evt->filename, filename);
+
+	if (!synth_event_list) {
+		synth_event_list = grecs_list_create();
+		synth_event_list->free_entry = synth_event_free;
+	}
+	grecs_list_append(synth_event_list, evt);
+}
+
+/*
+ * Given event MASK for file FILENAME in directory DIRNAME, scan the
+ * queue of synthetic events and update masks of matching ones to avoid
+ * delivering the same event twice.  If the mask becomes empty after the
+ * update, remove the event.
+ */
+void
+synthetic_event_update(event_mask mask, const char *dirname,
+		       const char *filename)
+{
+	struct grecs_list_entry *ep;
+
+	if (!synth_event_list)
+		return;
+
+	ep = synth_event_list->head;
+	while (ep) {
+		struct grecs_list_entry *next = ep->next;
+		struct synthetic_event *evt = ep->data;
+		if (strcmp(evt->dirname, dirname) == 0 ||
+		    strcmp(evt->filename, filename) == 0) {
+			evtxor(&evt->mask, &mask, &evt->mask);
+			if (evtnullp(&evt->mask)) {
+				grecs_list_remove_entry(synth_event_list, ep);
+				free(evt);
+			}
+		}
+		ep = next;
+	}
+}
+
+/* Deliver the events enqueued and flush the queue. */
+void
+synthetic_event_flush(void)
+{
+	struct grecs_list_entry *ep;
+
+	if (!synth_event_list)
+		return;
+
+	while ((ep = synth_event_list->head) != NULL) {
+		struct synthetic_event *evt = ep->data;
+		struct watchpoint *wp = watchpoint_lookup(evt->dirname);
+		if (wp) {
+			if (debug_level >= 1) {
+				char *sys, *gen;
+				if (ev_format(evt->mask, &gen, &sys)) {
+					diag(LOG_ERR, "%s", _("out of memory"));
+					sys = gen = "?";
+				}
+				debugprt("delivering synthetic event: gen=%s, sys=%s, dirname=%s, filename=%s",
+					 gen, sys, evt->dirname, evt->filename);
+				free(sys);
+				free(gen);
+			}
+			watchpoint_run_handlers(wp, evt->mask, evt->dirname,
+						evt->filename);
+		}
+		grecs_list_remove_entry(synth_event_list, ep);
+		free(evt);
+	}
 }

@@ -281,6 +281,8 @@ process_event(struct inotify_event *ep)
 	if (debug_level > 0)
 		ev_log(LOG_DEBUG, wpt, event, ep->len == 0 ? NULL : ep->name);
 
+	synthetic_event_update(event, dirname, filename);
+
 	watchpoint_run_handlers(wpt, event, dirname, filename);
 	
 	if (ep->mask & (IN_DELETE|IN_MOVED_FROM)) {

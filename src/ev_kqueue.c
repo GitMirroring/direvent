@@ -239,6 +239,7 @@ process_event(struct kevent *ep)
 	 */
 	if (!dp->isdir) {
 		filename = watchpoint_extract_filename(dp, &dirname);
+		synthetic_event_update(event, dirname, filename);
 		watchpoint_run_handlers(dp, event, dirname, filename);
 	}
 	
@@ -276,4 +277,3 @@ sysev_select()
 		
 	return 0;
 }
-		

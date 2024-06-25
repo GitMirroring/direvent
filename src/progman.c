@@ -630,7 +630,7 @@ prog_handler_run(struct watchpoint *wp, event_mask *event,
 
 		if (ev_format(*event, &gen, &sys)) {
 			diag(LOG_ERR, "%s", _("out of memory"));
-			sys = "?";
+			sys = gen = "?";
 		}
 		diag(LOG_NOTICE,
 		     "%s: ignoring event %s (%s): %zu instances already running",

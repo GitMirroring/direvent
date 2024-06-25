@@ -51,6 +51,14 @@ evtand(event_mask const *a, event_mask const *b, event_mask *res)
 }
 
 int
+evtxor(event_mask const *a, event_mask const *b, event_mask *res)
+{
+	res->gen_mask = a->gen_mask & ~b->gen_mask;
+	res->sys_mask = a->sys_mask & ~b->sys_mask;
+	return res->gen_mask != 0 || res->sys_mask != 0;
+}
+
+int
 evtnullp(event_mask *mask)
 {
 	return mask->gen_mask == 0 && mask->sys_mask == 0;

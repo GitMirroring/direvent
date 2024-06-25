@@ -153,7 +153,17 @@ struct prog_handler {
 struct handler *prog_handler_alloc(event_mask ev_mask, filpatlist_t fpat,
 				   struct prog_handler *p);
 void prog_handler_free(struct prog_handler *);
+
+struct synthetic_event {
+	event_mask mask;
+	char *dirname;
+	char *filename;
+};
 
+void synthetic_event_enqueue(event_mask, char const *, char const *);
+void synthetic_event_update(event_mask mask, const char *dirname,
+			    const char *filename);
+void synthetic_event_flush(void);
 
 extern int foreground;
 extern int debug_level;
@@ -202,6 +212,7 @@ void evtempty(event_mask *mask);
 void evtfill(event_mask *mask);
 int evtnullp(event_mask *mask);
 int evtand(event_mask const *a, event_mask const *b, event_mask *res);
+int evtxor(event_mask const *a, event_mask const *b, event_mask *res);
 void evtrans_sys_to_gen(int fflags, event_mask const *xlat, event_mask *ret_evt);
 int evtrans_gen_to_sys(event_mask const *event, event_mask const *xlat);
 
