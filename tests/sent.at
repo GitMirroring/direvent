@@ -66,6 +66,8 @@ sed -e '/installing CREATE sentinel for file/d' -e "s|$cwd|CWD|" stderr | sort
 [0],
 [direvent: [[NOTICE]] installing CREATE sentinel for CWD/dir
 direvent: [[NOTICE]] installing CREATE sentinel for CWD/dir/sub
+direvent: [[NOTICE]] uninstalling CREATE sentinel for CWD/dir
+direvent: [[NOTICE]] uninstalling CREATE sentinel for CWD/dir/sub
 ])
 
 AT_CLEANUP

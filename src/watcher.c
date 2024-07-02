@@ -341,6 +341,8 @@ static void
 sentinel_handler_free(void *ptr)
 {
 	struct sentinel *sentinel = ptr;
+	diag(LOG_NOTICE, _("uninstalling CREATE sentinel for %s"),
+	     sentinel->watchpoint->dirname);
 	watchpoint_unref(sentinel->watchpoint);
 	free(sentinel);
 }
