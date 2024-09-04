@@ -9,7 +9,7 @@ Version 5.4, 2024-07-02
 * Simultaneous execution limits
 
 It is possible to limit number of command instances that are allowed
-to run simultaneosly for a particular watcher.  This is done using
+to run simultaneously for a particular watcher.  This is done using
 the 'max-instances' statement in 'watcher' section.
 
 * Restore the nowait default
