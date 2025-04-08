@@ -1,6 +1,5 @@
 # List of source files which contain translatable strings.
 
-src/cmdline.h
 src/config.c
 src/direvent.c
 src/ev_inotify.c
@@ -14,8 +13,11 @@ grecs/src/cidr.c
 grecs/src/format.c
 grecs/src/grecs-lex.l
 grecs/src/lineacc.c
-grecs/src/opthelp.c
 grecs/src/path-parser.c
 grecs/src/symtab.c
 grecs/src/tree.c
 grecs/wordsplit/wordsplit.c
+
+parseopt/help.c
+parseopt/optset.c
+parseopt/parseopt.c

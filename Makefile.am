@@ -1,5 +1,5 @@
 # This file is part of GNU direvent -*- autoconf -*-
-# Copyright (C) 2012-2024 Sergey Poznyakoff
+# Copyright (C) 2012-2025 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,9 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with GNU direvent.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I am -I grecs/am
+ACLOCAL_AMFLAGS = -I am -I grecs/am -I parseopt
 
-SUBDIRS= grecs src tests doc po
+SUBDIRS= grecs parseopt src tests doc po
 
 .PHONY: ChangeLog
 ChangeLog:

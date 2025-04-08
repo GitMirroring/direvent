@@ -1,5 +1,5 @@
 # This file is part of GNU direvent -*- autoconf -*-
-# Copyright (C) 2012-2024 Sergey Poznyakoff
+# Copyright (C) 2012-2025 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 # along with GNU direvent.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_PREREQ([2.71])
-AC_INIT([GNU direvent], [5.4], [bug-direvent@gnu.org.ua], [direvent],
+AC_INIT([GNU direvent], [5.4.90], [bug-direvent@gnu.org.ua], [direvent],
 	[http://www.gnu.org.ua/software/direvent])
 AC_CONFIG_SRCDIR([src/direvent.c])
 AC_CONFIG_HEADERS([config.h])
@@ -95,8 +95,11 @@ fi
 
 # Grecs subsystem
 
-GRECS_SETUP([grecs],[tree-api git2chg no-preproc getopt tests])
+GRECS_SETUP([grecs],[tree-api git2chg no-preproc tests])
 GRECS_HOST_PROJECT_INCLUDES='-I$(top_srcdir)/src'
+
+# Parseopt
+PARSEOPT_SETUP(,[CPPFLAGS='-I$(top_srcdir)/src'])
 
 # Gettext.
 AM_ICONV

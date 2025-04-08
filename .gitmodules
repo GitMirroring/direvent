@@ -1,3 +1,6 @@
 [submodule "grecs"]
 	path = grecs
 	url = git://git.gnu.org.ua/grecs.git
+[submodule "parseopt"]
+	path = parseopt
+	url = git://git.gnu.org.ua/parseopt.git

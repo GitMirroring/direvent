@@ -25,6 +25,7 @@
 #include <locale.h>
 #include <limits.h>
 #include "wordsplit.h"
+#include "parseopt.h"
 
 #ifndef SYSCONFDIR
 # define SYSCONFDIR "/etc"
@@ -580,13 +581,226 @@ static char *opt_user = NULL;
 static int opt_facility = -1;
 static int lint_only = 0;
 
-#include "cmdline.h"
+
+#define EX_USAGE 1
+
+static int
+optset_prio(struct parseopt *po, struct optdef *opt, char *arg)
+{
+	if (strcmp(arg, "none") == 0)
+		log_to_stderr = -1;
+	else
+		log_to_stderr = get_priority(arg);
+	return 0;
+}
+
+static int
+optset_facility(struct parseopt *po, struct optdef *opt, char *arg)
+{
+	opt_facility = get_facility(arg);
+	return 0;
+}
+
+static int
+optset_incdir(struct parseopt *po, struct optdef *opt, char *arg)
+{
+	grecs_preproc_add_include_dir(arg);
+	return 0;
+}
+
+static int
+optset_user(struct parseopt *po, struct optdef *opt, char *arg)
+{
+	opt_user = arg;
+	if (!getpwnam(opt_user)) {
+		diag(LOG_CRIT, "no such user: %s", opt_user);
+		return -1;
+	}
+	return 0;
+}
+
+static int
+optset_config_help(struct parseopt *po, struct optdef *opt, char *arg)
+{
+	config_help();
+	exit(0);
+}
+
+static struct optdef options[] = {
+	{
+		.opt_name = "debug",
+		.opt_doc = N_("increase debug level"),
+		.opt_set = optset_incr,
+		.opt_ptr = &opt_debug_level
+	},
+	{
+		.opt_name = "d",
+		.opt_flags = OPTFLAG_ALIAS
+	},
+
+	{
+		.opt_name = "l",
+		.opt_argdoc = N_("PRIO"),
+		.opt_doc =
+		N_("log everything with priority PRIO and higher to the"
+		   " stderr, as well as to the syslog"),
+		.opt_set = optset_prio,
+	},
+
+	{
+		.opt_name = "facility",
+		.opt_argdoc = N_("NAME"),
+		.opt_doc = N_("set syslog facility"),
+		.opt_set = optset_facility
+	},
+	{
+		.opt_name = "F",
+		.opt_flags = OPTFLAG_ALIAS
+	},
+
+	{
+		.opt_name = "foreground",
+		.opt_doc = N_("remain in foreground"),
+		.opt_set = optset_incr,
+		.opt_ptr = &opt_foreground
+	},
+	{
+		.opt_name = "f",
+		.opt_flags = OPTFLAG_ALIAS
+	},
+
+	{
+		.opt_name = "include-directory",
+		.opt_argdoc = N_("DIR"),
+		.opt_doc = N_("add include directory"),
+		.opt_set = optset_incdir
+	},
+	{
+		.opt_name = "I",
+		.opt_flags = OPTFLAG_ALIAS
+	},
+
+	{
+		.opt_name = "self-test",
+		.opt_argdoc = N_("PROG"),
+		.opt_doc = N_("self-test mode"),
+		.opt_set = optset_string_copy,
+		.opt_ptr = &self_test_prog
+	},
+	{
+		.opt_name = "T",
+		.opt_flags = OPTFLAG_ALIAS
+	},
+
+	{
+		.opt_name = "pidfile",
+		.opt_argdoc = N_("FILE"),
+		.opt_doc = N_("set PID file"),
+		.opt_set = optset_string_copy,
+		.opt_ptr = &opt_pidfile
+	},
+	{
+		.opt_name = "P",
+		.opt_flags = OPTFLAG_ALIAS
+	},
+
+	{
+		.opt_name = "lint",
+		.opt_doc = N_("check configuration file and exit"),
+		.opt_set = optset_incr,
+		.opt_ptr = &lint_only
+	},
+	{
+		.opt_name = "t",
+		.opt_flags = OPTFLAG_ALIAS
+	},
+
+	{
+		.opt_name = "user",
+		.opt_argdoc = N_("USER"),
+		.opt_doc = N_("run as this user"),
+		.opt_set = optset_user
+	},
+	{
+		.opt_name = "u",
+		.opt_flags = OPTFLAG_ALIAS
+	},
+
+	{
+		.opt_name = "config-help",
+		.opt_doc = N_("show configuration file summary"),
+		.opt_set = optset_config_help
+	},
+	{
+		.opt_name = "H",
+		.opt_flags = OPTFLAG_ALIAS
+	},
+
+	{ NULL }
+}, *optdef[] = { options, NULL };
+
+static int
+print_dir(int flag, const char *dir, void *data)
+{
+	WORDWRAP_FILE wf = data;
+	wordwrap_putc(wf, ' ');
+	wordwrap_puts(wf, dir);
+	return 0;
+}
+
+static void
+help_hook(WORDWRAP_FILE wf, struct parseopt *po)
+{
+	wordwrap_printf(wf,
+		_("The optional CONFIG argument supplies the name of the"
+		  " configuration file"
+		  " to use instead of %s."), DEFAULT_CONFFILE);
+	wordwrap_para(wf);
+	/* TRANSLATORS: %s is one of: inotify, kqueue */
+	wordwrap_printf(wf,
+			_("This direvent uses %s interface."), INTERFACE);
+	wordwrap_para(wf);
+	if (grecs_include_path_count(GRECS_STD_INCLUDE)) {
+		wordwrap_puts(wf, _("Include search path:"));
+		grecs_foreach_include_dir(GRECS_STD_INCLUDE, print_dir, wf);
+	} else
+		wordwrap_printf(wf, _("No include search path."));
+}
+
+static int copyright_year = 2025;
+static char gplv3[] = "\
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\
+This is free software: you are free to change and redistribute it.\n\
+There is NO WARRANTY, to the extent permitted by law.\n\
+";
+
+static void
+version_hook(WORDWRAP_FILE wf, struct parseopt *po)
+{
+	wordwrap_printf(wf, "%s (%s) %s\n",
+			po->po_program_name, PACKAGE_NAME, PACKAGE_VERSION);
+	wordwrap_printf(wf, "Copyright %s 2012-%d Sergey Poznyakoff\n",
+			_("(C)"),
+			copyright_year);
+	wordwrap_puts(wf, gplv3);
+}
+
+static struct parseopt po = {
+	.po_descr = N_("GNU direvent monitors changes in directories"),
+	.po_argdoc = N_("[CONFIG]"),
+	.po_optdef = optdef,
+	.po_package_name = PACKAGE_NAME,
+	.po_package_url = PACKAGE_URL,
+	.po_bugreport_address = PACKAGE_BUGREPORT,
+	.po_help_hook = help_hook,
+	.po_version_hook = version_hook,
+	.po_ex_usage = EX_USAGE
+};
+
 
 int
 main(int argc, char **argv)
 {
-	int i;
-
 #ifdef ENABLE_NLS
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -598,10 +812,11 @@ main(int argc, char **argv)
 
 	config_init();
 
-	parse_options(argc, argv, &i);
-
-	argc -= i;
-	argv += i;
+	if (parseopt_getopt(&po, argc, argv) == OPT_ERR) {
+		diag(LOG_CRIT, _("parseopt_getopt failed"));
+		exit(1);
+	}
+	parseopt_argv(&po, &argc, &argv);
 
 	switch (argc) {
 	default:

@@ -1,5 +1,5 @@
 # This file is part of GNU direvent -*- autoconf -*-
-# Copyright (C) 2012-2024 Sergey Poznyakoff
+# Copyright (C) 2012-2025 Sergey Poznyakoff
 #
 # GNU direvent is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@ bin_PROGRAMS=direvent
 direvent_SOURCES=\
  direvent.c\
  direvent.h\
- cmdline.h\
  closefds.c\
  config.c\
  envop.c\
@@ -44,17 +43,12 @@ else
 endif
 endif
 
-LDADD=@GRECS_LDADD@ @LIBINTL@
+LDADD=@PARSEOPT_LDADD@ @GRECS_LDADD@ @LIBINTL@
 AM_CPPFLAGS=\
+ @PARSEOPT_INCLUDES@\
  @GRECS_INCLUDES@\
  -DSYSCONFDIR=\"$(sysconfdir)\"\
  -DLOCALEDIR=\"$(localedir)\"\
  -DINCLUDE_PATH_ARGS='$(INCLUDE_PATH_ARGS)'
 
-BUILT_SOURCES=cmdline.h
-EXTRA_DIST=cmdline.opt
 noinst_HEADERS=gettext.h
-
-SUFFIXES=.opt .c .h
-.opt.h:
-	$(AM_V_GEN)m4 -s $(top_srcdir)/@GRECS_SUBDIR@/build-aux/getopt.m4 $< > $@
