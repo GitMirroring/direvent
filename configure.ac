@@ -20,6 +20,7 @@ AC_INIT([GNU direvent], [5.4.90], [bug-direvent@gnu.org.ua], [direvent],
 AC_CONFIG_SRCDIR([src/direvent.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIRS([am grecs/am parseopt])
 AM_INIT_AUTOMAKE([1.15 gnits tar-ustar silent-rules std-options])
 
 # Enable silent rules by default:
@@ -95,7 +96,7 @@ fi
 
 # Grecs subsystem
 
-GRECS_SETUP([grecs],[tree-api git2chg no-preproc tests])
+GRECS_SETUP(git2chg, no-preproc, tests)
 GRECS_HOST_PROJECT_INCLUDES='-I$(top_srcdir)/src'
 
 # Parseopt

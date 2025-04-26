@@ -73,4 +73,5 @@ fi
 
 test -d am || mkdir am
 git submodule update --init --recursive
+./grecs/bootstrap -q
 autoreconf -f -i -s

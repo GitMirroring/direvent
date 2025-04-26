@@ -1398,10 +1398,10 @@ A file was deleted.
 A file was modified.
 @kwindex MOVED_FROM, linux event
 @item MOVED_FROM
-A file was moved into a monitored directory.
+A file was moved out from a monitored directory.
 @kwindex MOVED_TO, linux event
 @item MOVED_TO
-A file was moved out from a monitored directory.
+A file was moved into a monitored directory.
 @kwindex OPEN, linux event
 @item OPEN
 A file was opened.

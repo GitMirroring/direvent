@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with GNU direvent.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I am -I grecs/am -I parseopt
-
 SUBDIRS= grecs parseopt src tests doc po
 
 .PHONY: ChangeLog
