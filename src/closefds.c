@@ -88,10 +88,12 @@ close_fds_sys (int minfd)
 {
   DIR *dir;
   struct dirent *ent;
+  int fd;
 
   dir = opendir ("/proc/self/fd");
   if (!dir)
     return -1;
+  fd = dirfd (dir);
   while ((ent = readdir (dir)) != NULL)
     {
       long n;
@@ -101,7 +103,7 @@ close_fds_sys (int minfd)
 	continue;
 
       n = strtol (ent->d_name, &p, 10);
-      if (n >= minfd && n < INT_MAX && *p == 0)
+      if (n >= minfd && n < INT_MAX && *p == 0 && n != fd)
 	close ((int) n);
     }
   closedir (dir);
