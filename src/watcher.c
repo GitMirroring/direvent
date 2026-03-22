@@ -656,7 +656,7 @@ void
 setup_watchers(void)
 {
 	sysev_init();
-	if (grecs_symtab_count(nametab) == 0) {
+	if (!nametab || grecs_symtab_count(nametab) == 0) {
 		diag(LOG_CRIT, _("no event handlers configured"));
 		exit(1);
 	}
