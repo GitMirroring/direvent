@@ -274,6 +274,7 @@ main(int argc, char **argv)
 			fprintf(fp, "%s\n", environ[i]);
 	}
 	fprintf(fp, "# End\n");
+        fclose (fp);
 
 	if (pid)
 		kill(pid, sig);
