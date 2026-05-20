@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2024 Sergey Poznyakoff
+   Copyright (C) 2012-2026 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -18,6 +18,7 @@
 #include <grecs.h>
 #include <pwd.h>
 #include <grp.h>
+#include <limits.h>
 
 envop_t *direvent_envop;
 
@@ -826,6 +827,31 @@ cb_file_pattern(enum grecs_callback_command cmd, grecs_node_t *node,
 	return 0;
 }
 
+static int
+cb_duration(enum grecs_callback_command cmd, grecs_node_t *node,
+	    void *varptr, void *cb_data)
+{
+	grecs_locus_t *locus = &node->locus;
+	grecs_value_t *value = node->v.value;
+	struct timespec *ts = varptr;
+	double d;
+	char *p;
+	
+	ASSERT_SCALAR(cmd, locus);
+	if (assert_grecs_value_type(&value->locus, value, GRECS_TYPE_STRING))
+		return 1;
+	errno = 0;
+        d = strtod(value->v.string, &p);
+	if (errno || d < 0 || d > LONG_MAX) {
+		grecs_error(&value->locus, 0, _("bad duration value"));
+		return 1;
+	}		
+	ts->tv_sec = (long) d;
+	ts->tv_nsec = (d - ts->tv_sec) * 1e9;
+
+	return 0;
+}
+		    
 static struct grecs_keyword watcher_kw[] = {
 	{ "path", NULL, N_("Pathname to watch"),
 	  grecs_type_string, GRECS_DFLT, &eventconf.pathlist, 0,
@@ -872,11 +898,15 @@ static struct grecs_keyword direvent_kw[] = {
 	  grecs_type_section, GRECS_DFLT, NULL, 0, NULL, NULL, syslog_kw },
 	{ "debug", N_("level"), N_("Set debug level"),
 	  grecs_type_int, GRECS_DFLT, &debug_level },
-	{"environ", NULL,
-	 N_("Modify global program environment."),
-	 grecs_type_section, GRECS_DFLT,
-	 NULL, 0,
-	 cb_global_environ, NULL, cb_env_keywords },
+	{ "environ", NULL,
+	  N_("Modify global program environment."),
+	  grecs_type_section, GRECS_DFLT,
+	  NULL, 0,
+	  cb_global_environ, NULL, cb_env_keywords },
+	{ "shutdown-timeout", NULL,
+	  N_("Time to wait for all subprocesses to terminate"),
+	  grecs_type_string, GRECS_DFLT,
+	  &shutdown_timeout, 0, cb_duration },
 	{ "watcher", NULL, N_("Configure event watcher"),
 	  grecs_type_section, GRECS_DFLT, NULL, 0,
 	  cb_watcher, NULL, watcher_kw },

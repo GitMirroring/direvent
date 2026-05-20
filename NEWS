@@ -1,10 +1,18 @@
-direvent -- history of user-visible changes. 2025-04-07
-Copyright (C) 2012-2024 Sergey Poznyakoff
+direvent -- history of user-visible changes. 2026-05-20
+Copyright (C) 2012-2026 Sergey Poznyakoff
 See the end of file for copying conditions.
 
 Please send direvent bug reports to <bug-direvent@gnu.org.ua>
 
 Version 5.4.90 (git)
+
+* All subprocesses are terminated before exit
+
+* New configuration statement: grace-timeout
+
+Sets the time to wait for all subprocesses to terminate before exiting
+the program. The default is 1 second.
+
 
 Version 5.4, 2024-07-02
 
@@ -223,7 +231,7 @@ Initial release
 =========================================================================
 Copyright information:
 
-Copyright (C) 2012-2024 Sergey Poznyakoff
+Copyright (C) 2012-2026 Sergey Poznyakoff
 
    Permission is granted to anyone to make or distribute verbatim copies
    of this document as received, in any medium, provided that the

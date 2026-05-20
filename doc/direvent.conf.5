@@ -1,5 +1,5 @@
 .\" GNU direvent - directory content watcher daemon -*- nroff -*-
-.\" Copyright (C) 2012-2024 Sergey Poznyakoff
+.\" Copyright (C) 2012-2026 Sergey Poznyakoff
 .\"
 .\" GNU direvent is free software; you can redistribute it and/or modify it
 .\" under the terms of the GNU General Public License as published by the
@@ -13,7 +13,7 @@
 .\"
 .\" You should have received a copy of the GNU General Public License along
 .\" with direvent. If not, see <http://www.gnu.org/licenses/>.
-.TH DIREVENT.CONF 5 "June 25, 2024" "DIREVENT" "Direvent User Reference"
+.TH DIREVENT.CONF 5 "May 20, 2026" "DIREVENT" "Direvent User Reference"
 .SH NAME
 direvent.conf \- configuration file for
 .BR direvent (8).
@@ -358,6 +358,13 @@ Upon successful startup store the PID of the daemon process in \fIFILE\fR.
 \fBdebug\fR \fINUMBER\fR;
 Set debug level.  Valid \fINUMBER\fR values are \fB0\fR (no debug) to \fB3\fR
 (maximum verbosity).
+.TP
+\fBshutdown\-timeout \fINUMBER\fR
+Sets the time to wait for all subprocesses to terminate before exiting
+the program, in seconds. Any process that remains running after this
+timeout expires will be forcefully terminated.
+.IP
+\fINUMBER\fR is a floating-point number.  The default is 1 second.
 .SH LOGGING
 While connected to the terminal \fBdirevent\fR outputs its diagnostics and
 debugging messages to the standard error.  After disconnecting from the
@@ -621,7 +628,7 @@ statement, if any.
 .SH "SEE ALSO"
 .BR direvent (8).
 .SH COPYRIGHT
-Copyright \(co 2012\-2021 Sergey Poznyakoff
+Copyright \(co 2012\-2026 Sergey Poznyakoff
 .br
 .na
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>

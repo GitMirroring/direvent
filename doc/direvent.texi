@@ -35,7 +35,7 @@
 @end ifinfo
 
 @copying
-Copyright @copyright{} 2013--2024 Sergey Poznyakoff
+Copyright @copyright{} 2013--2026 Sergey Poznyakoff
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -939,6 +939,14 @@ Upon successful startup store the PID of the daemon process in @var{file}.
 @deffn {Config} debug @var{number}
 Set debug level.  Valid @var{number} values are @samp{0} (no debug)
 through @samp{4} (maximum verbosity).
+@end deffn
+
+@deffn {Config} shutdown-timeout @var{number}
+Sets the time to wait for all subprocesses to terminate before exiting
+the program, in seconds. Any process that remains running after this
+timeout expires will be forcefully terminated.
+
+@var{number} is a floating-point value. The default is 1 second.
 @end deffn
 
 @node syslog

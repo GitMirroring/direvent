@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2024 Sergey Poznyakoff
+   Copyright (C) 2012-2026 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <regex.h>
+#include <time.h>
 #include <grecs/list.h>
 #include <grecs/symtab.h>
 #include <envop.h>
@@ -175,6 +176,7 @@ extern pid_t self_test_pid;
 extern int exit_code;
 extern envop_t *direvent_envop;
 
+extern struct timespec shutdown_timeout;
 
 void nomem_abend(void);
 void *emalloc(size_t size);
@@ -301,6 +303,7 @@ size_t handler_list_size(handler_list_t hlist);
 struct process *process_lookup(pid_t pid);
 void process_cleanup(int expect_term);
 void process_timeouts(void);
+void process_drain(void);
 
 #define NITEMS(a) ((sizeof(a)/sizeof((a)[0])))
 struct sigtab {

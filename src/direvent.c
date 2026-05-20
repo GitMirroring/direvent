@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2024 Sergey Poznyakoff
+   Copyright (C) 2012-2026 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -46,6 +46,8 @@ char *pidfile = NULL;             /* Store PID to this file */
 char *user = NULL;                /* User to run as */
 
 int log_to_stderr = LOG_DEBUG;
+
+struct timespec shutdown_timeout = { 1, 0 };
 
 
 /* Diagnostic functions */
@@ -767,7 +769,7 @@ help_hook(WORDWRAP_FILE wf, struct parseopt *po)
 		wordwrap_printf(wf, _("No include search path."));
 }
 
-static int copyright_year = 2025;
+static int copyright_year = 2026;
 static char gplv3[] = "\
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\
 This is free software: you are free to change and redistribute it.\n\
@@ -885,6 +887,7 @@ main(int argc, char **argv)
 		watchpoint_gc();
 	}
 
+	process_drain();
 	shutdown_watchers();
 
 	diag(LOG_INFO, _("%s %s stopped"), program_name, VERSION);

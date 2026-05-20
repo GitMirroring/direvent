@@ -1,5 +1,5 @@
 /* direvent - directory content watcher daemon
-   Copyright (C) 2012-2024 Sergey Poznyakoff
+   Copyright (C) 2012-2026 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -229,6 +229,46 @@ process_cleanup(int expect_term)
 			proc_push(&proc_avail, p);
 		}
 	}
+}
+
+enum { NANOSEC = 1000000000 };
+
+static void
+timespec_add(struct timespec *a, struct timespec *b)
+{
+	a->tv_sec += b->tv_sec;
+	a->tv_nsec += b->tv_nsec;
+	if (a->tv_nsec >= NANOSEC) {
+		++a->tv_sec;
+		a->tv_nsec -= NANOSEC;
+	}
+}
+
+void
+process_drain(void)
+{
+	struct process *p;
+	struct timespec ts;
+	
+	/* Send all processes the TERM signal. */
+	for (p = proc_list; p; p = p->next)
+		kill(p->pid, SIGTERM);
+
+	/* Wait for all processes to terminate. */
+	diag(LOG_INFO, _("waiting for processes to terminate"));
+		     
+	clock_gettime (CLOCK_MONOTONIC, &ts);
+	timespec_add (&ts, &shutdown_timeout);
+	
+	do {		
+		process_cleanup(1);
+	} while (proc_list &&
+		 clock_nanosleep (CLOCK_MONOTONIC, TIMER_ABSTIME,
+				  &ts, NULL) == 0);
+
+	/* Forcefully terminate anything left. */
+	for (p = proc_list; p; p = p->next)
+		kill(p->pid, SIGKILL);	
 }
 
 void
