@@ -26,7 +26,7 @@ watcher {
 	option (shell);
 }
 ],
-[genfile -f dir/file -s 10 -t 1 -- -s 20 -- s 20],
+[genfile -f dir/file -s 10 -t 1 -- -s 20 -- -s 20],
 [outfile=$cwd/dump
 mkdir dir
 ],

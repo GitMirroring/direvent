@@ -1,3 +1,20 @@
+/* genfile.c - create files for direvent testsuite
+   This file is part of GNU direvent testsuite.
+   Copyright (C) 2021-2026 Sergey Poznyakoff
+
+   GNU direvent is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 3 of the License, or (at your
+   option) any later version.
+
+   GNU direvent is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with direvent. If not, see <http://www.gnu.org/licenses/>. */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -7,14 +24,22 @@
 #include <time.h>
 
 char *filename;
-int force;
 size_t size = 4096;
 struct timespec ts;
 
 void
 usage(FILE *fp)
 {
-	fprintf(fp, "FIXME: no help so far\n");
+	fprintf(fp, "usage: genfile [OPTIONS...]\n");
+	fprintf(fp, "creates a file for the direvent test suite\n\n");
+	fprintf(fp, "OPTIONS are:\n\n");
+	fprintf(fp, "  -f FILENAME   name of the file to create\n");	
+	fprintf(fp, "  -s SIZE       write SIZE more bytes to the file\n");
+	fprintf(fp, "  -t D          sleep for D seconds before processing next option set\n\n");
+	fprintf(fp, "  -h            display this help text\n\n");
+	fprintf(fp, "Any number of -s and -t options can be given, separated by\n");
+	fprintf(fp, "double-dashes (--), to stretch the file creation over certain time.\n\n");
+	fprintf(fp, "In the absence of -s option, SIZE defaults to %zu.\n", size);
 }
 
 #ifndef SIZE_T_MAX
