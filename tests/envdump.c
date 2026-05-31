@@ -1,6 +1,6 @@
 /* envdump.c - dump execution environment
    This file is part of GNU direvent testsuite.
-   Copyright (C) 2013-2024 Sergey Poznyakoff
+   Copyright (C) 2013-2026 Sergey Poznyakoff
 
    GNU direvent is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -26,7 +26,7 @@ extern char **environ;
 char *progname;
 
 char *
-agetcwd()
+agetcwd(void)
 {
 	char *buf = NULL;
 	size_t bufsize = 128;
@@ -171,13 +171,22 @@ read_pid_and_sig(char *arg, pid_t *pid, int *sig)
 	}
 }
 
+volatile int term = 0;
+
+void
+sighan(int sig)
+{
+	if (++term > 1)
+		_exit(1);
+}
+
 int
 main(int argc, char **argv)
 {
 	int i;
 	char *p;
 	FILE *fp = NULL;
-	char *file;
+	char *file = NULL;
 	char *mode = "w";
 	int sortenv = 0;
 	char *include = NULL;
@@ -186,6 +195,11 @@ main(int argc, char **argv)
 	int sig = SIGHUP;
 	int print_args = 1;
 	int print_cwd = 1;
+	struct sigaction act;
+
+	act.sa_flags = 0;
+	act.sa_handler = sighan;
+	sigaction(SIGTERM, &act, NULL);
 
 	progname = strrchr(argv[0], '/');
 	if (progname)
@@ -256,8 +270,11 @@ main(int argc, char **argv)
 			if (*p == ':')
 				i++;
 		}
-		itab = calloc(i + 1, sizeof(itab));
-
+		itab = calloc(i + 1, sizeof(itab[0]));
+		if (!itab) {
+			fprintf(stderr, "%s: not enough memory\n", progname);
+			return 1;
+		}
 		itab[0] = include;
 		for (p = include, i = 1; *p; p++) {
 			if (*p == ':') {
@@ -267,14 +284,13 @@ main(int argc, char **argv)
 		}
 		itab[i] = NULL;
 	}
-
 	fprintf(fp, "# Environment\n");
 	for (i = 0; environ[i]; i++) {
 		if (!itab || locate(itab, environ[i]))
 			fprintf(fp, "%s\n", environ[i]);
 	}
 	fprintf(fp, "# End\n");
-        fclose (fp);
+	fclose(fp);
 
 	if (pid)
 		kill(pid, sig);

@@ -251,9 +251,10 @@ process_drain(void)
 	struct timespec ts;
 	
 	/* Send all processes the TERM signal. */
-	for (p = proc_list; p; p = p->next)
-		kill(p->pid, SIGTERM);
-
+	for (p = proc_list; p; p = p->next) {
+		if (p->type == PROC_HANDLER)
+			kill(p->pid, SIGTERM);
+	}
 	/* Wait for all processes to terminate. */
 	diag(LOG_INFO, _("waiting for processes to terminate"));
 		     
@@ -263,12 +264,15 @@ process_drain(void)
 	do {		
 		process_cleanup(1);
 	} while (proc_list &&
-		 clock_nanosleep (CLOCK_MONOTONIC, TIMER_ABSTIME,
-				  &ts, NULL) == 0);
+		 clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, NULL));
 
-	/* Forcefully terminate anything left. */
-	for (p = proc_list; p; p = p->next)
-		kill(p->pid, SIGKILL);	
+
+	if (proc_list) {
+		diag(LOG_INFO,
+		     _("forcefully terminating the remaining processes"));
+		for (p = proc_list; p; p = p->next)
+			kill(p->pid, SIGKILL);
+	}
 }
 
 void
