@@ -15,7 +15,7 @@
 # along with GNU direvent.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_PREREQ([2.71])
-AC_INIT([GNU direvent], [5.4.90], [bug-direvent@gnu.org.ua], [direvent],
+AC_INIT([GNU direvent], [5.5], [bug-direvent@gnu.org.ua], [direvent],
 	[http://www.gnu.org.ua/software/direvent])
 AC_CONFIG_SRCDIR([src/direvent.c])
 AC_CONFIG_HEADERS([config.h])
